@@ -1,11 +1,11 @@
-p .title {
+p.title {
   font-size: 60px;
 }
 
-p .subtitle {
+p.subtitle {
   font-size: 24px;
 }
 
-p .body {
+p.body {
   font-size: 14px;
 }

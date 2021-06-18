@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import Typography from './components/Typography';
-const DEVICE_NAME = 'Oxysmart 1604';
+
 const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const CHT_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 const CONFIG = {
@@ -9,10 +9,13 @@ const CONFIG = {
     services: [SERVICE_UUID],
   }],
 };
+const VITAL = 8;
+const GRAPH = 7;
+const TIME_INTERVAL = 1000;
 
 const storage = [];
 const signal = [];
-const timeInterval = 1000;
+
 
 const getTime = (startTime) => {
   const endTime = new Date();
@@ -41,13 +44,11 @@ const App = () => {
       const num = value.getUint8(i);
       if (num === FLAG && signal.length > 0) {
         const identifier = signal[3];
-        const vital = signal[8];
-        const graph = signal[7];
-        if (identifier === 7) {
+        if (identifier === GRAPH) {
           setOxyData(prev => ({ ...prev, graphPoint: signal.slice(5, 10) }));
         }
 
-        if (identifier === 8) {
+        if (identifier === VITAL) {
           setOxyData(prev => ({ ...prev, spo2: signal[5], heartRate: signal[6] }));
         }
         storage.push(signal);
@@ -56,7 +57,7 @@ const App = () => {
       signal.push(num);
     }
   };
-  // console.log(oxyData);
+
   const onDisconnected = () => {
     setIsConnected(false);
     setDeviceName('No devices are connected');
@@ -85,7 +86,7 @@ const App = () => {
       const interval = setInterval(() => {
         const elapsedTime = getTime(timer);
         setElapsedTime(elapsedTime);
-      }, timeInterval);
+      }, TIME_INTERVAL);
 
       return ()=> clearInterval(interval);
 
