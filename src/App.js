@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import Typography from './components/Typography';
-
+import Widget from './components/Widget';
 const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const CHT_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 const CONFIG = {
@@ -29,13 +29,29 @@ const getTime = (startTime) => {
 
 };
 
+const widgets = [{
+  accessor: 'heartRate',
+  unit: 'bpm',
+  description: 'Heart Rate 💖',
+},
+{
+  accessor: 'spo2',
+  unit: '%',
+  description: 'SPO2 💨',
+},
+{
+  accessor: 'elapsedTime',
+  unit: null,
+  description: 'Elapsed Time 🕒',
+}];
+
 const App = () => {
-  const [oxyData, setOxyData] = useState({ spo2: 0, heartRate: 0, graphPoint: [] });
+  const [oxyData, setOxyData] = useState({ spo2: 0, heartRate: 0, heartGraph: [], elapsedTime: '00:00:00' });
   const [timer, setTimer] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState('00:00:00');
+  // const [elapsedTime, setElapsedTime] = useState('00:00:00');
   // const [vitals, setVitals] = useState({spo2: 0, heartRate: 0, graph: []})
   const [isConnected, setIsConnected] = useState(false);
-  const [deviceName, setDeviceName] = useState('No devices are connected');
+  const [deviceName, setDeviceName] = useState('No devices are connected X');
 
   const handleNotifications = (e) => {
     const value = e.target.value;
@@ -45,7 +61,7 @@ const App = () => {
       if (num === FLAG && signal.length > 0) {
         const identifier = signal[3];
         if (identifier === GRAPH) {
-          setOxyData(prev => ({ ...prev, graphPoint: signal.slice(5, 10) }));
+          setOxyData(prev => ({ ...prev, heartGraph: signal.slice(5, 10) }));
         }
 
         if (identifier === VITAL) {
@@ -85,7 +101,7 @@ const App = () => {
     if (isConnected && timer!==null) {
       const interval = setInterval(() => {
         const elapsedTime = getTime(timer);
-        setElapsedTime(elapsedTime);
+        setOxyData(prev => ({ ...prev, elapsedTime: elapsedTime }));
       }, TIME_INTERVAL);
 
       return ()=> clearInterval(interval);
@@ -95,35 +111,20 @@ const App = () => {
 
   return (
     <div>
-      <p>{deviceName}</p>
-      {isConnected ? <p>Device connected</p> : <button onClick={subscribeBLE}>Connect</button>}
-      <div>
-        <Typography variant='title'>
-          {`${oxyData.heartRate}bpm`}
-        </Typography>
-        <Typography variant='body'>
-          Heart Rate 💖
-        </Typography>
+      <div className='status-bar'>
+        <div className={isConnected ? 'status-bar__prompt--success' : 'status-bar__prompt--warning'}>
+          <Typography variant='body'>{deviceName}</Typography>
+        </div>
+        {isConnected ? <p className='status-bar__message body'>Device connected</p>: <button className='btn__connect' onClick={subscribeBLE}>Connect</button>}
       </div>
-      <div>
-        <Typography variant='title'>
-          {`${oxyData.spo2}%`}
-        </Typography>
-        <Typography variant='body'>
-          SPO2 💨
-        </Typography>
-      </div>
-      <div>
-        <Typography variant='title'>
-          {elapsedTime}
-        </Typography>
-        <Typography variant='body'>
-            Elapsed Time 🕒
-        </Typography>
+      <div className='widget__container'>
+        {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
+
       </div>
     </div>
   );
 };
+
 
 export default App;
 
