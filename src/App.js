@@ -12,10 +12,10 @@ const CONFIG = {
 const VITAL = 8;
 const GRAPH = 7;
 const TIME_INTERVAL = 1000;
-
-const storage = [];
+const STATUS_INTERVAL = 5000;
+const vitalHistory = [];
 const signal = [];
-
+const rollbackNum = 5;
 
 const getTime = (startTime) => {
   const endTime = new Date();
@@ -57,8 +57,8 @@ const App = () => {
     const value = e.target.value;
     const FLAG = 170;
     for (let i = 0; i < value.byteLength; i++) {
-      const num = value.getUint8(i);
-      if (num === FLAG && signal.length > 0) {
+      const count = value.getUint8(i);
+      if (count === FLAG && signal.length > 0) {
         const identifier = signal[3];
         if (identifier === GRAPH) {
           setOxyData(prev => ({ ...prev, heartGraph: signal.slice(5, 10) }));
@@ -67,10 +67,10 @@ const App = () => {
         if (identifier === VITAL) {
           setOxyData(prev => ({ ...prev, spo2: signal[5], heartRate: signal[6] }));
         }
-        storage.push(signal);
+        // storage.push(signal);
         signal.length = 0;
       }
-      signal.push(num);
+      signal.push(count);
     }
   };
 
@@ -97,17 +97,67 @@ const App = () => {
       alert(error);
     }
   };
+
   useEffect(() => {
-    if (isConnected && timer!==null) {
-      const interval = setInterval(() => {
+    if (isConnected && timer !== null) {
+
+      const currentTime = setInterval(() => {
         const elapsedTime = getTime(timer);
-        setOxyData(prev => ({ ...prev, elapsedTime: elapsedTime }));
+        setOxyData(prev => {
+          vitalHistory.push(prev);
+          return { ...prev, elapsedTime: elapsedTime };
+        });
       }, TIME_INTERVAL);
 
-      return ()=> clearInterval(interval);
-
+      return () => {
+        clearInterval(currentTime);
+      };
     }
-  },[isConnected, timer]);
+  }, [isConnected, timer]);
+
+  // const isUserInComa = (count, target) => {
+  //   const { heartRate: heartRate_A, spo2: spo2_A } = vitalHistory[count - 1]
+
+  //   for (let i = count - 2; i > target; i--) {
+  //     const { heartRate: heartRate_B, spo2: spo2_B } = vitalHistory[i]
+  //     if (heartRate_A === heartRate_B && spo2_A === spo2_B) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
+
+  useEffect(() => {
+    const len = vitalHistory.length;
+    if (len > rollbackNum) {
+      const lastVital = vitalHistory[len - 1];
+      const isUserInComa = vitalHistory.slice(rollbackNum * -1)
+        .every(({ heartRate, spo2 }) =>
+          heartRate === lastVital.heartRate &&
+          spo2 === lastVital.spo2);
+    }
+  }, [vitalHistory.length]);
+
+  // useEffect(() => {
+  //   const statusChecker = setInterval(() => {
+  //     vitalHistory.push(oxyData);
+  //     const len = vitalHistory.length
+  //     if (len > 1) {
+  //       const { heartRate: heartRate_A, spo2: spo2_A } = vitalHistory[len - 1]
+  //       const { heartRate: heartRate_B, spo2: spo2_B } = vitalHistory[len - 2]
+  //       console.log(vitalHistory)
+  //       if (heartRate_A === heartRate_B && spo2_A === spo2_B) {
+  //         console.log('warning! the user is in coma.');
+  //       }
+  //     } else {
+  //       clearInterval(statusChecker)
+  //     }
+  //   }, STATUS_INTERVAL)
+  //   return () => {
+  //     clearInterval(statusChecker)
+  //   }
+  // },[oxyData])
+
 
   return (
     <div>
