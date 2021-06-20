@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MainTest from '../view/MainTest';
+import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
 import vitalHistory from '../model/vitalHistory'
 const TIME_INTERVAL = 1000;
@@ -20,9 +20,11 @@ const defaultOxyData = {
   elapsedTime: '00:00:00',
 };
 
-const userVital = new vitalHistory('Do Park');
+const userVital = new vitalHistory('Do Park',
+  process.env.REACT_APP_SERVICE_UUID,
+  process.env.REACT_APP_CHT_UUID);
 
-const Controller = () => {
+const DashboardController = () => {
 
   const [userStatus, setUserStatus] = useState(defaultUserStatus);
   const [oxyData, setOxyData] = useState(defaultOxyData);
@@ -105,17 +107,17 @@ const Controller = () => {
       signal.push(count);
     }
   };
+
   const onSubscribe = async () => {
-    const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-    const CHT_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+    const SERVICE_UUID = userVital.serviceUUID;
+    const CHT_UUID = userVital.chtUUID;
+    console.log(SERVICE_UUID, CHT_UUID)
     const CONFIG = {
       filters: [{
         services: [SERVICE_UUID],
       }],
     };
-
     try {
-
       const device = await navigator.bluetooth.requestDevice(CONFIG);
       onConnected(device);
       device.addEventListener('gattserverdisconnected', onDisconnected);
@@ -132,7 +134,7 @@ const Controller = () => {
     }
   };
 
-  return <MainTest setUserStatus={setUserStatus} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
+  return <Dashboard userVital={userVital} setUserStatus={setUserStatus} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
 };
 
-export default Controller;
+export default DashboardController;

@@ -57,7 +57,7 @@
   background-color: rgba(var(--warning), 0.2);
   border: none;
   padding: 0px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .status-bar__prompt--success {
@@ -72,6 +72,14 @@
   color: rgba(var(--success), 1.0);
 }
 
+.status-bar__inputs {
+  margin-left: auto;
+}
+
+.status-bar__buttonContainer {
+
+}
+
 /* .status-bar__message::before {
   content: "•";
   font-size: 20px;
@@ -79,7 +87,7 @@
 } */
 
 .btn__primary {
-  border-radius: 4px;
+  border-radius: 6px;
   border: none;
   background-color: var(--primary);
   color: #fff;
@@ -95,19 +103,22 @@
 }
 
 .btn__connect {
-  border-radius: 4px;
+  margin: auto 0;
+  border-radius: 6px;
   border: var(--secondary30) 1px solid;
   background-color: #fff;
   color: var(--secondary40);
   font-size: 14px;
   font-weight: 600;
   padding: 0px 16px;
+  height: 100%;
+  margin-left: 8px;
 }
 
 .btn__connect:hover {
-  background-color: var(--primary);
-  border: #fff 1px solid;
-  color: #fff;
+  background-color: #fff;
+  border:var(--primary) 1px solid;
+  color: var(--primary);
   transition: all .3s;
 }
 
@@ -134,10 +145,17 @@
 
 .modal {
   display: flex;
-  justify-content: space-between;
   padding: var(--spacing30);
   height: 100%;
   flex-direction: column;
   box-sizing: border-box;
 
+}
+
+input {
+  padding: 13px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--secondary10);
+  margin-left: 8px;
 }

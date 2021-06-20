@@ -26,3 +26,11 @@ export const getTime = (startTime) => {
   return time;
 
 };
+
+export const getCharacteristicUUID = () => {
+  return prompt("Type characteristics UUID");
+}
+
+export const getServiceUUID = () => {
+  return prompt("Type service UUID");
+}

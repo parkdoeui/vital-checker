@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
@@ -23,12 +23,13 @@ const widgets = [{
 
 const audio = new Audio(emergencyAudio);
 
-const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
+const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData }) => {
 
   const { isConnected, isEmergency, deviceName } = userStatus;
-
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const serviceRef = useRef(null);
+  const chtRef = useRef(null);
   useEffect(() => {
     if (isEmergency && !isCoolingDown) {
       setOpenModal(true);
@@ -57,6 +58,14 @@ const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
     audio.play();
   }
 
+  const onConnect = () => {
+    if (serviceRef.current.value && chtRef.current.value) {
+      console.log(serviceRef.current.value);
+      userVital.addUUIDs(serviceRef.current.value, chtRef.current.value);
+    }
+    onSubscribe()
+  }
+
   return (
     <>
       {openModal && <div className='modal__background'>
@@ -80,7 +89,15 @@ const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
         <div className={isConnected ? 'status-bar__prompt--success' : 'status-bar__prompt--warning'}>
           <Typography variant='body'>{deviceName || 'Device is not connected'}</Typography>
         </div>
-        {isConnected ? <p className='status-bar__message body'>Device connected</p>: <button className='btn__connect' onClick={onSubscribe}>Connect</button>}
+        <div className='status-bar__inputs'>
+          <form>
+            {!userVital.serviceUUID && <input ref={serviceRef} placeholder='service UUID' type='text' />}
+            {!userVital.chtUUID && <input ref={chtRef} placeholder='characteristic UUID' type='text' />}
+          </form>
+        </div>
+        <div className='status-bar__buttonContainer'>
+          {isConnected ? <p className='status-bar__message body'>Device connected</p>: <button className='btn__connect' onClick={()=>onConnect()}>Connect</button>}
+        </div>
       </div>
       <div className='widget__container'>
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
@@ -90,4 +107,4 @@ const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
 };
 
 
-export default MainTest;
+export default Dashboard;

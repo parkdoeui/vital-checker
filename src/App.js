@@ -1,9 +1,8 @@
-// import Main from './view/Main';
 import React from 'react';
-import Controller from './controller/Controller';
+import DashboardController from './controller/DashboardController';
 
 const App = () => {
-  return <Controller/>;
+  return <DashboardController/>;
 };
 
 
