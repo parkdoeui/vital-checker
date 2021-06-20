@@ -172,8 +172,8 @@ const Main = () => {
               <Typography variant='title'>응급상황</Typography>
             </div>
             <div>
-              <Typography variant='subtitle'>The user's vital sign is stopped. Call 911 if the user is in coma.<br />Do CPR until paramedics arrive.</Typography>
-              <Typography variant='subtitle'>착용자의 바이탈 사인이 멈췄습니다. 의식이 없다면 911에 연락하세요.<br />구급대원이 도착할 때 까지 심폐소생술을 해주세요.</Typography>
+              <Typography variant='subtitle'>The vital sign of the user is stopped. Call 911 if the user is in coma.<br />Do CPR until paramedics arrive.</Typography>
+              <Typography variant='subtitle'>착용자의 바이탈 사인이 멈췄습니다. 의식이 없다면 911에 연락하세요.<br />구급대원이 도착할 때 까지 심폐소생술을 실행하세요.</Typography>
             </div>
             <div>
               <button className='btn__primary' onClick={()=>onModalClose()}>착용자는 괜찮습니다. 알람을 끕니다.</button>

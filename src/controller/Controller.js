@@ -3,7 +3,7 @@ import MainTest from '../view/MainTest';
 
 const TIME_INTERVAL = 1000;
 const signal = [];
-const rollbackNum = 5;
+const rollbackCount = 30;
 
 const defaultUserStatus = {
   isConnected: false,
@@ -60,7 +60,7 @@ const checkVitalAnomalies = (vitalSnapshot) => {
     heartRate === lastVital.heartRate &&
         spo2 === lastVital.spo2);
 
-  const test2 = testRange.some(({ heartRate, spo2 }) => HR_MAX > 140 || HR_MIN < 40 || SPO2_MIN < 80);
+  const test2 = testRange.some(({ heartRate, spo2 }) => heartRate > HR_MAX || heartRate < HR_MIN || spo2 < SPO2_MIN);
 
   return test1 || test2;
 };
@@ -92,13 +92,13 @@ const Controller = () => {
   }, [userStatus.isConnected, userStatus.startTime]);
 
   useEffect(() => {
-    const newSnapshot = userVital.storage.slice(rollbackNum * -1);
+    const newSnapshot = userVital.storage.slice(rollbackCount * -1);
     setVitalSnapshot(newSnapshot);
   },[JSON.stringify(userVital.storage)]);
 
 
   useEffect(() => {
-    if (vitalSnapshot.length >= rollbackNum) {
+    if (vitalSnapshot.length >= rollbackCount) {
       const isUserInComa = checkVitalAnomalies(vitalSnapshot);
 
       setUserStatus(prev => ({ ...prev, isEmergency: isUserInComa }));
@@ -122,6 +122,7 @@ const Controller = () => {
         deviceName: null,
         startTime: null,
       }));
+    setOxyData(defaultOxyData);
   };
 
   //This belongs to Model

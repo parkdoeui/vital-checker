@@ -3,6 +3,8 @@ import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
 
+const COOLDOWN_TIME = 10000;
+
 const widgets = [{
   accessor: 'heartRate',
   unit: 'bpm',
@@ -23,19 +25,32 @@ const audio = new Audio(emergencyAudio);
 
 const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
 
-  const { isConnected, isEmergency, deviceName, startTime } = userStatus;
-  console.log(isEmergency);
-  const [openModal, setOpenModal] = useState(false);
+  const { isConnected, isEmergency, deviceName } = userStatus;
 
+  const [openModal, setOpenModal] = useState(false);
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
   useEffect(() => {
-    if (isEmergency) {
+    if (isEmergency && !isCoolingDown) {
       setOpenModal(true);
     }
-  },[isEmergency]);
+  },[isEmergency, isCoolingDown]);
+
+  useEffect(() => {
+    if (isCoolingDown) {
+      const coolDownInterval = setInterval(() => {
+        setIsCoolingDown(false);
+      }, COOLDOWN_TIME);
+
+      return () => {
+        clearInterval(coolDownInterval);
+      };
+    }
+  },[isCoolingDown]);
 
   const onModalClose = () => {
     setUserStatus(prev => ({ ...prev, isEmergency: false }));
     setOpenModal(false);
+    setIsCoolingDown(true);
   };
 
   if (openModal) {
