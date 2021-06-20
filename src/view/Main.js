@@ -81,7 +81,7 @@ const Main = () => {
   };
 
   const onDisconnected = ( _, device) => {
-    console.log(device)
+    console.log(device);
     setIsConnected(false);
     setDeviceName('No devices are connected');
     setTimer(false);

@@ -1,5 +1,5 @@
 // import Main from './view/Main';
-import Controller from './controller/Controller'
+import Controller from './controller/Controller';
 
 const App = () => {
   return <Controller/>;

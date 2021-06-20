@@ -21,10 +21,10 @@ const widgets = [{
 
 const audio = new Audio(emergencyAudio);
 
-const MainTest = ({onSubscribe, setUserStatus, userStatus, oxyData}) => {
+const MainTest = ({ onSubscribe, setUserStatus, userStatus, oxyData }) => {
 
   const { isConnected, isEmergency, deviceName, startTime } = userStatus;
-
+  console.log(isEmergency);
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const MainTest = ({onSubscribe, setUserStatus, userStatus, oxyData}) => {
   },[isEmergency]);
 
   const onModalClose = () => {
-    setUserStatus(prev => ({...prev, isEmergency: false}))
+    setUserStatus(prev => ({ ...prev, isEmergency: false }));
     setOpenModal(false);
   };
 

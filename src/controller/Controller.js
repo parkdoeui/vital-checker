@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MainTest from '../view/MainTest'
+import MainTest from '../view/MainTest';
 
 const TIME_INTERVAL = 1000;
 const signal = [];
@@ -10,14 +10,14 @@ const defaultUserStatus = {
   isEmergency: false,
   deviceName: null,
   startTime: null,
-}
+};
 
 const defaultOxyData = {
   spo2: 0,
   heartRate: 0,
   heartGraph: [],
-  elapsedTime: '00:00:00'
-}
+  elapsedTime: '00:00:00',
+};
 
 class vitalHistory {
   constructor(userID) {
@@ -30,11 +30,11 @@ class vitalHistory {
   }
 
   get() {
-    return this.storage
+    return this.storage;
   }
 }
 
-const userVital = new vitalHistory('Do Park')
+const userVital = new vitalHistory('Do Park');
 
 const getTime = (startTime) => {
   const endTime = new Date();
@@ -42,34 +42,34 @@ const getTime = (startTime) => {
   const s = parseInt(elapsedTime / 1000) % 60;
   const m = parseInt(elapsedTime / 60000) % 60;
   const h = parseInt(elapsedTime / 3600000) % 24;
-  (elapsedTime);
-  (m, h);
+
   const prefix = '0';
   const time = `${h < 10 ? prefix + h : h}:${m < 10 ? prefix + m : m}:${s < 10 ? prefix + s : s}`;
   return time;
 
 };
 
-const checkVitalAnomalies = () => {
+const checkVitalAnomalies = (vitalSnapshot) => {
   const HR_MAX = 140;
   const HR_MIN = 40;
   const SPO2_MIN = 80;
-  const testingRange = [...userVital];
-  const lastVital = testingRange.pop();
+  const testRange = [...vitalSnapshot];
+  const lastVital = testRange.pop();
 
-  const test1 = testingRange.every(({ heartRate, spo2 }) =>
+  const test1 = testRange.every(({ heartRate, spo2 }) =>
     heartRate === lastVital.heartRate &&
         spo2 === lastVital.spo2);
 
-  const test2 = testingRange.some(({ heartRate, spo2 }) => HR_MAX > 140 || HR_MIN < 40 || SPO2_MIN < 80);
+  const test2 = testRange.some(({ heartRate, spo2 }) => HR_MAX > 140 || HR_MIN < 40 || SPO2_MIN < 80);
 
   return test1 || test2;
 };
 
 const Controller = () => {
 
-  const [userStatus, setUserStatus] = useState(defaultUserStatus)
-  const [oxyData, setOxyData] = useState(defaultOxyData)
+  const [userStatus, setUserStatus] = useState(defaultUserStatus);
+  const [oxyData, setOxyData] = useState(defaultOxyData);
+  const [vitalSnapshot, setVitalSnapshot] = useState([]);
 
   useEffect(() => {
     if (userStatus.isConnected && userStatus.startTime) {
@@ -91,36 +91,38 @@ const Controller = () => {
 
   }, [userStatus.isConnected, userStatus.startTime]);
 
+  useEffect(() => {
+    const newSnapshot = userVital.storage.slice(rollbackNum * -1);
+    setVitalSnapshot(newSnapshot);
+  },[JSON.stringify(userVital.storage)]);
+
 
   useEffect(() => {
-    const len = userVital.length;
-    if (len > rollbackNum) {
-      const isUserInComa = checkVitalAnomalies();
-      setOxyData(prev => ({ ...prev, isEmergency: isUserInComa }));
-      console.table(userVital);
-    }
-  }, [JSON.stringify(userVital)]);
+    if (vitalSnapshot.length >= rollbackNum) {
+      const isUserInComa = checkVitalAnomalies(vitalSnapshot);
 
-  console.table(userVital.storage)
-  const onConnected = (device) => {
-    setUserStatus(prev =>
-    ({
+      setUserStatus(prev => ({ ...prev, isEmergency: isUserInComa }));
+    }
+  }, [JSON.stringify(vitalSnapshot)]);
+
+  const onConnected = async (device) => {
+    setUserStatus(prev => ({
       ...prev,
       isConnected: true,
       deviceName: device.name,
-      startTime: new Date()
-    }))
-  }
+      startTime: new Date(),
+    }));
+  };
 
   const onDisconnected = () => {
     setUserStatus(prev =>
-    ({
-      ...prev,
-      isConnected: false,
-      deviceName: null,
-      startTime: null
-    }))
-  }
+      ({
+        ...prev,
+        isConnected: false,
+        deviceName: null,
+        startTime: null,
+      }));
+  };
 
   //This belongs to Model
   const handleNotifications = (e) => {
@@ -133,6 +135,7 @@ const Controller = () => {
       if (count === BREAK_POINT && signal.length > 0) {
         const identifier = signal[3];
         if (identifier === GRAPH) {
+          //this will potentially remove useEffect get time
           setOxyData(prev => ({ ...prev, heartGraph: signal.slice(5, 10) }));
         }
         if (identifier === VITAL) {
@@ -143,7 +146,6 @@ const Controller = () => {
       signal.push(count);
     }
   };
-
   const onSubscribe = async () => {
     const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
     const CHT_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
@@ -154,8 +156,9 @@ const Controller = () => {
     };
 
     try {
+
       const device = await navigator.bluetooth.requestDevice(CONFIG);
-      onConnected(device)
+      onConnected(device);
       device.addEventListener('gattserverdisconnected', onDisconnected);
       const server = await device.gatt.connect();
       const service = await server.getPrimaryService(SERVICE_UUID);
@@ -164,9 +167,12 @@ const Controller = () => {
       oximetry.addEventListener('characteristicvaluechanged', handleNotifications);
 
     } catch (error) {
+
       alert(error);
+
     }
   };
+
 
 
   return <MainTest setUserStatus={setUserStatus} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
