@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import MainTest from '../view/MainTest';
-
+import { checkVitalAnomalies, getTime } from '../utils';
+import vitalHistory from '../model/vitalHistory'
 const TIME_INTERVAL = 1000;
 const signal = [];
-const rollbackCount = 30;
+const rollbackCount = 15;
 
 const defaultUserStatus = {
   isConnected: false,
@@ -19,51 +20,7 @@ const defaultOxyData = {
   elapsedTime: '00:00:00',
 };
 
-class vitalHistory {
-  constructor(userID) {
-    this.userID = userID;
-    this.storage = [];
-  }
-
-  add(data) {
-    this.storage.push(data);
-  }
-
-  get() {
-    return this.storage;
-  }
-}
-
 const userVital = new vitalHistory('Do Park');
-
-const getTime = (startTime) => {
-  const endTime = new Date();
-  const elapsedTime = endTime - startTime;
-  const s = parseInt(elapsedTime / 1000) % 60;
-  const m = parseInt(elapsedTime / 60000) % 60;
-  const h = parseInt(elapsedTime / 3600000) % 24;
-
-  const prefix = '0';
-  const time = `${h < 10 ? prefix + h : h}:${m < 10 ? prefix + m : m}:${s < 10 ? prefix + s : s}`;
-  return time;
-
-};
-
-const checkVitalAnomalies = (vitalSnapshot) => {
-  const HR_MAX = 140;
-  const HR_MIN = 40;
-  const SPO2_MIN = 80;
-  const testRange = [...vitalSnapshot];
-  const lastVital = testRange.pop();
-
-  const test1 = testRange.every(({ heartRate, spo2 }) =>
-    heartRate === lastVital.heartRate &&
-        spo2 === lastVital.spo2);
-
-  const test2 = testRange.some(({ heartRate, spo2 }) => heartRate > HR_MAX || heartRate < HR_MIN || spo2 < SPO2_MIN);
-
-  return test1 || test2;
-};
 
 const Controller = () => {
 
@@ -94,13 +51,14 @@ const Controller = () => {
   useEffect(() => {
     const newSnapshot = userVital.storage.slice(rollbackCount * -1);
     setVitalSnapshot(newSnapshot);
+    console.table(vitalSnapshot);
   },[JSON.stringify(userVital.storage)]);
 
 
   useEffect(() => {
     if (vitalSnapshot.length >= rollbackCount) {
       const isUserInComa = checkVitalAnomalies(vitalSnapshot);
-
+      console.log(isUserInComa);
       setUserStatus(prev => ({ ...prev, isEmergency: isUserInComa }));
     }
   }, [JSON.stringify(vitalSnapshot)]);
@@ -173,8 +131,6 @@ const Controller = () => {
 
     }
   };
-
-
 
   return <MainTest setUserStatus={setUserStatus} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
 };
