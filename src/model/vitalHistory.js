@@ -19,4 +19,4 @@ class vitalHistory {
   }
 }
 
-export default vitalHistory
+export default vitalHistory;

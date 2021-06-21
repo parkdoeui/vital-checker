@@ -31,7 +31,7 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
   const [UUIDs, setUUIDs] = useState({
     serviceUUID: userVital.serviceUUID,
     chtUUID: userVital.chtUUID,
-  })
+  });
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
@@ -64,13 +64,10 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
 
   const onConnect = () => {
     if (serviceRef.current !== null && chtRef.current !== null) {
-      debugger;
       userVital.addUUIDs(serviceRef.current.value, chtRef.current.value);
     }
-    debugger;
-    console.log(userVital)
-    onSubscribe()
-  }
+    onSubscribe();
+  };
 
   return (
     <>
@@ -108,7 +105,9 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
       <div className='widget__container'>
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--heart-graph'>
-          {/* <HeartGraph data={oxyData.HeartGraph}/> */}
+          <svg>
+
+          </svg>
         </div>
       </div>
     </>

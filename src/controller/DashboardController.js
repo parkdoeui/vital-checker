@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
-import vitalHistory from '../model/vitalHistory'
+import vitalHistory from '../model/vitalHistory';
 const TIME_INTERVAL = 1000;
 const signal = [];
 const rollbackCount = 15;
@@ -60,7 +60,6 @@ const DashboardController = () => {
   useEffect(() => {
     if (vitalSnapshot.length >= rollbackCount) {
       const isUserInComa = checkVitalAnomalies(vitalSnapshot);
-      console.log(isUserInComa);
       setUserStatus(prev => ({ ...prev, isEmergency: isUserInComa }));
     }
   }, [JSON.stringify(vitalSnapshot)]);
@@ -83,9 +82,6 @@ const DashboardController = () => {
         startTime: null,
       }));
     setOxyData(defaultOxyData);
-    debugger;
-    console.log(userVital);
-
   };
 
   //This belongs to Model
@@ -114,7 +110,6 @@ const DashboardController = () => {
   const onSubscribe = async () => {
     const SERVICE_UUID = userVital.serviceUUID;
     const CHT_UUID = userVital.chtUUID;
-    console.log(SERVICE_UUID, CHT_UUID)
     const CONFIG = {
       filters: [{
         services: [SERVICE_UUID],
