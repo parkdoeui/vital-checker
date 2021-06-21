@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
-
+import LineGraph from '../components/LineGraph';
 const COOLDOWN_TIME = 10000;
 
 const widgets = [{
@@ -28,10 +28,6 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
-  const [UUIDs, setUUIDs] = useState({
-    serviceUUID: userVital.serviceUUID,
-    chtUUID: userVital.chtUUID,
-  });
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
@@ -105,9 +101,8 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
       <div className='widget__container'>
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--heart-graph'>
-          <svg>
-
-          </svg>
+          <Typography variant='subtitle2'>Heart rate history</Typography>
+          <LineGraph width={1453} height={300} data={userVital.storage}/>
         </div>
       </div>
     </>

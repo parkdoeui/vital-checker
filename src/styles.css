@@ -28,6 +28,12 @@
   font-size: 24px;
 }
 
+.subtitle2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-block: 0.5em;
+}
+
 .body {
   font-size: 14px;
 }
