@@ -45,13 +45,19 @@
   margin: var(--spacing10);
 }
 
-.widget {
+.widget,
+.widget--heart-graph {
   padding: var(--spacing20);
   border-radius: 4px;
   border: 1px solid var(--secondary10);
   box-shadow: 0px 1px 4px var(--shadow10);
   background-color: #fff
 }
+
+.widget--heart-graph {
+  grid-column: span 3;
+}
+
 .status-bar__prompt--warning,
 .status-bar__prompt--success {
   background-color: rgba(var(--warning), 0.2);

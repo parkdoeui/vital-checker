@@ -83,6 +83,9 @@ const DashboardController = () => {
         startTime: null,
       }));
     setOxyData(defaultOxyData);
+    debugger;
+    console.log(userVital);
+
   };
 
   //This belongs to Model

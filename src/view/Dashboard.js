@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
@@ -28,13 +28,17 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const [UUIDs, setUUIDs] = useState({
+    serviceUUID: userVital.serviceUUID,
+    chtUUID: userVital.chtUUID,
+  })
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
     if (isEmergency && !isCoolingDown) {
       setOpenModal(true);
     }
-  },[isEmergency, isCoolingDown]);
+  }, [isEmergency, isCoolingDown]);
 
   useEffect(() => {
     if (isCoolingDown) {
@@ -46,7 +50,7 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
         clearInterval(coolDownInterval);
       };
     }
-  },[isCoolingDown]);
+  }, [isCoolingDown]);
 
   const onModalClose = () => {
     setUserStatus(prev => ({ ...prev, isEmergency: false }));
@@ -59,10 +63,12 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
   }
 
   const onConnect = () => {
-    if (serviceRef.current.value && chtRef.current.value) {
-      console.log(serviceRef.current.value);
+    if (serviceRef.current !== null && chtRef.current !== null) {
+      debugger;
       userVital.addUUIDs(serviceRef.current.value, chtRef.current.value);
     }
+    debugger;
+    console.log(userVital)
     onSubscribe()
   }
 
@@ -101,6 +107,9 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
       </div>
       <div className='widget__container'>
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
+        <div className='widget--heart-graph'>
+          {/* <HeartGraph data={oxyData.HeartGraph}/> */}
+        </div>
       </div>
     </>
   );
