@@ -102,7 +102,19 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--heart-graph'>
           <Typography variant='subtitle2'>Heart rate history</Typography>
-          <LineGraph width={1453} height={300} data={userVital.storage}/>
+          <LineGraph
+            width={1453}
+            height={300}
+            data={userVital.storage}
+            config={{
+              key: 'heartRate',
+              xAxisRange: 'auto',
+              yAxisRange: [0, 160],
+              style: {
+                color: '#fa0000',
+                strokeWidth: 5,
+              },
+            }} />
         </div>
       </div>
     </>
