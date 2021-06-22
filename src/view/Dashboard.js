@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
-import LineGraph from '../components/LineGraph';
+import StreamlineGraph from '../components/StreamlineGraph';
+import ParentSize from '../components/ParentSize';
 const COOLDOWN_TIME = 10000;
 
 const widgets = [{
@@ -28,6 +29,7 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
+
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
@@ -102,8 +104,8 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--line-graph'>
           <Typography variant='subtitle2'>Heart rate history</Typography>
-          <LineGraph
-            width={1453}
+          <ParentSize>{(width) => <StreamlineGraph
+            width={width}
             height={300}
             data={userVital.storage}
             config={{
@@ -120,27 +122,30 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
                 unit: 'bpm',
               },
             }} />
+          }</ParentSize>
         </div>
         <div className='widget--line-graph'>
           <Typography variant='subtitle2'>SpO2 history</Typography>
-          <LineGraph
-            width={1453}
-            height={300}
-            data={userVital.storage}
-            config={{
-              key: 'spo2',
-              xAxisRange: 'auto',
-              yAxisRange: [70, 110],
-              style: {
-                color: '#0075FF',
-                strokeWidth: 5,
-              },
-              threshold: {
-                max: null,
-                min: 80,
-                unit: '%',
-              },
-            }} />
+          <ParentSize>
+            {(width) => <StreamlineGraph
+              width={width}
+              height={300}
+              data={userVital.storage}
+              config={{
+                key: 'spo2',
+                xAxisRange: 'auto',
+                yAxisRange: [70, 110],
+                style: {
+                  color: '#0075FF',
+                  strokeWidth: 5,
+                },
+                threshold: {
+                  max: null,
+                  min: 80,
+                  unit: '%',
+                },
+              }} />
+            }</ParentSize>
         </div>
       </div>
     </>

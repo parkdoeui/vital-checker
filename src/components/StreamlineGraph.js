@@ -26,7 +26,6 @@ const LineGraph = ({ data, width, height, config }) => {
 
   const path = lineGenerator(refinedData);
 
-  // console.log(color)
   return (
     <div>
       <svg width={width} height={height}>
