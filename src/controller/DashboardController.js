@@ -53,7 +53,6 @@ const DashboardController = () => {
   useEffect(() => {
     const newSnapshot = userVital.storage.slice(rollbackCount * -1);
     setVitalSnapshot(newSnapshot);
-    console.table(vitalSnapshot);
   },[JSON.stringify(userVital.storage)]);
 
 

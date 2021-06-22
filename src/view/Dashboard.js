@@ -100,7 +100,7 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
       </div>
       <div className='widget__container'>
         {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
-        <div className='widget--heart-graph'>
+        <div className='widget--line-graph'>
           <Typography variant='subtitle2'>Heart rate history</Typography>
           <LineGraph
             width={1453}
@@ -113,6 +113,32 @@ const Dashboard = ({ userVital, onSubscribe, setUserStatus, userStatus, oxyData 
               style: {
                 color: '#fa0000',
                 strokeWidth: 5,
+              },
+              threshold: {
+                max: 130,
+                min: 30,
+                unit: 'bpm',
+              },
+            }} />
+        </div>
+        <div className='widget--line-graph'>
+          <Typography variant='subtitle2'>SpO2 history</Typography>
+          <LineGraph
+            width={1453}
+            height={300}
+            data={userVital.storage}
+            config={{
+              key: 'spo2',
+              xAxisRange: 'auto',
+              yAxisRange: [70, 110],
+              style: {
+                color: '#0075FF',
+                strokeWidth: 5,
+              },
+              threshold: {
+                max: null,
+                min: 80,
+                unit: '%',
               },
             }} />
         </div>

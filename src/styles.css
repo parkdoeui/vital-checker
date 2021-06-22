@@ -52,7 +52,7 @@
 }
 
 .widget,
-.widget--heart-graph {
+.widget--line-graph {
   padding: var(--spacing20);
   border-radius: 4px;
   border: 1px solid var(--secondary10);
@@ -60,7 +60,7 @@
   background-color: #fff
 }
 
-.widget--heart-graph {
+.widget--line-graph {
   grid-column: span 3;
 }
 
