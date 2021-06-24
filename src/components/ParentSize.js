@@ -6,9 +6,11 @@ const ParentSize = ({ children }) => {
   const [parentWidth, setParentWidth] = useState();
 
   const onResize = () => {
-    const parentDiv = divRef.current.parentElement;
-    const padding = getComputedStyle(parentDiv).padding;
-    setParentWidth(parentDiv.clientWidth - parseInt(padding) * 2);
+    if (divRef.current) {
+      const parentDiv = divRef.current.parentElement;
+      const padding = getComputedStyle(parentDiv).padding;
+      setParentWidth(parentDiv.clientWidth - parseInt(padding) * 2);
+    }
   };
 
   useResizeObserver(onResize, divRef);

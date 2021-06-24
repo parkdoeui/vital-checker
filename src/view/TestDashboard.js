@@ -11,10 +11,9 @@ const COOLDOWN_TIME = 10000;
 
 const audio = new Audio(emergencyAudio);
 
-const TestDashboard = ({ onSubscribe ,onDisconnect }) => {
-  const { state, actions } = useContext(DashboardContext);
+const TestDashboard = ({ onSubscribe }) => {
+  const { dispatch, state } = useContext(DashboardContext);
   const { userStatus, oxyData, userVital } = state;
-  const { setUserStatus } = actions;
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
@@ -40,7 +39,8 @@ const TestDashboard = ({ onSubscribe ,onDisconnect }) => {
   }, [isCoolingDown]);
 
   const onModalClose = () => {
-    setUserStatus(prev => ({ ...prev, isEmergency: false }));
+    // setUserStatus(prev => ({ ...prev, isEmergency: false }));
+    dispatch({ type:'ALERT',payload:{ isEmergency: false } });
     setOpenModal(false);
     setIsCoolingDown(true);
   };
@@ -56,7 +56,10 @@ const TestDashboard = ({ onSubscribe ,onDisconnect }) => {
     onSubscribe();
   };
 
-
+  const onDisconnect = () => {
+    dispatch({ type: 'DISCONNECT' });
+    console.log('vital history: ', userVital);
+  };
 
   return (
     <>
