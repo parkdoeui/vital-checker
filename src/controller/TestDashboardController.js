@@ -1,34 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import Dashboard from '../view/Dashboard';
+import React, { useState, useEffect, useContext } from 'react';
+import TestDashboard from '../view/TestDashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
-import vitalHistory from '../model/vitalHistory';
+// import vitalHistory from '../model/vitalHistory';
+import { DashboardContext } from '../context/Dashboard';
+import { defaultOxyData } from '../configs';
 const TIME_INTERVAL = 1000;
 const signal = [];
-const rollbackCount = 15;
+const rollbackCount = 30;
 
-const defaultUserStatus = {
-  isConnected: false,
-  isEmergency: false,
-  deviceName: null,
-  startTime: null,
-};
+// const defaultUserStatus = {
+//   isConnected: false,
+//   isEmergency: false,
+//   deviceName: null,
+//   startTime: null,
+// };
 
-const defaultOxyData = {
-  spo2: 0,
-  heartRate: 0,
-  heartGraph: [],
-  elapsedTime: '00:00:00',
-};
+// const defaultOxyData = {
+//   spo2: 0,
+//   heartRate: 0,
+//   heartGraph: [],
+//   elapsedTime: '00:00:00',
+// };
 
-const userVital = new vitalHistory('Do Park',
-  process.env.REACT_APP_SERVICE_UUID,
-  process.env.REACT_APP_CHT_UUID);
+// const userVital = new vitalHistory('Do Park',
+//   process.env.REACT_APP_SERVICE_UUID,
+//   process.env.REACT_APP_CHT_UUID);
 
-const DashboardController = () => {
+const TestDashboardController = () => {
 
-  const [userStatus, setUserStatus] = useState(defaultUserStatus);
+  const { actions, state } = useContext(DashboardContext);
+  const { setUserStatus, setOxyData } = actions;
+  const { userVital, userStatus } = state;
   const [BLE, setBLE] = useState(null);
-  const [oxyData, setOxyData] = useState(defaultOxyData);
   const [vitalSnapshot, setVitalSnapshot] = useState([]);
 
   useEffect(() => {
@@ -137,7 +140,7 @@ const DashboardController = () => {
     }
   };
 
-  return <Dashboard userVital={userVital} setUserStatus={setUserStatus} onDisconnect={onDisconnect} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
+  return <TestDashboard onDisconnect={onDisconnect} onSubscribe={onSubscribe}/>;
 };
 
-export default DashboardController;
+export default TestDashboardController;

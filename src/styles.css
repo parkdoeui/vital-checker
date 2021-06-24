@@ -113,8 +113,8 @@
    color: #fff;
   transition: all .3s;
 }
-
-.btn__connect {
+.btn__primary--disconnect,
+.btn__primary--connect {
   margin: auto 0;
   border-radius: 6px;
   border: var(--secondary30) 1px solid;
@@ -131,6 +131,18 @@
   background-color: #fff;
   border:var(--primary) 1px solid;
   color: var(--primary);
+  transition: all .3s;
+}
+
+.btn__primary--disconnect {
+  background-color: rgba(var(--warning));
+  color: #fff;
+  border: none;
+}
+
+.btn__primary--disconnect:hover {
+  background-color: rgba(var(--warning), 0.8);
+  color: #fff;
   transition: all .3s;
 }
 

@@ -1,31 +1,20 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
 import StreamlineGraph from '../components/StreamlineGraph';
 import ParentSize from '../components/ParentSize';
-const COOLDOWN_TIME = 10000;
+import { DashboardContext } from '../context/Dashboard';
+import { defaultWidgets } from '../configs';
 
-const widgets = [{
-  accessor: 'heartRate',
-  unit: 'bpm',
-  description: 'Heart Rate 💖',
-},
-{
-  accessor: 'spo2',
-  unit: '%',
-  description: 'SPO2 💨',
-},
-{
-  accessor: 'elapsedTime',
-  unit: null,
-  description: 'Elapsed Time 🕒',
-}];
+const COOLDOWN_TIME = 10000;
 
 const audio = new Audio(emergencyAudio);
 
-const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userStatus, oxyData }) => {
-
+const TestDashboard = ({ onSubscribe ,onDisconnect }) => {
+  const { state, actions } = useContext(DashboardContext);
+  const { userStatus, oxyData, userVital } = state;
+  const { setUserStatus } = actions;
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
@@ -113,7 +102,7 @@ const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userSt
         </div>
       </div>
       <div className='widget__container'>
-        {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
+        {defaultWidgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--line-graph'>
           <Typography variant='subtitle2'>Heart rate history</Typography>
           <ParentSize>{(width) => <StreamlineGraph
@@ -165,4 +154,4 @@ const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userSt
 };
 
 
-export default Dashboard;
+export default TestDashboard;
