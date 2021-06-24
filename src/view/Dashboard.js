@@ -1,31 +1,19 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
 import Typography from '../components/Typography';
 import Widget from '../components/Widget';
 import emergencyAudio from '../assets/warning.ogg';
 import StreamlineGraph from '../components/StreamlineGraph';
 import ParentSize from '../components/ParentSize';
-const COOLDOWN_TIME = 10000;
+import { DashboardContext } from '../context/DashboardContext';
+import { defaultWidgets } from '../configs';
 
-const widgets = [{
-  accessor: 'heartRate',
-  unit: 'bpm',
-  description: 'Heart Rate 💖',
-},
-{
-  accessor: 'spo2',
-  unit: '%',
-  description: 'SPO2 💨',
-},
-{
-  accessor: 'elapsedTime',
-  unit: null,
-  description: 'Elapsed Time 🕒',
-}];
+const COOLDOWN_TIME = 10000;
 
 const audio = new Audio(emergencyAudio);
 
-const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userStatus, oxyData }) => {
-
+const Dashboard = ({ onSubscribe }) => {
+  const { dispatch, state } = useContext(DashboardContext);
+  const { userStatus, oxyData, userVital } = state;
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
@@ -51,7 +39,8 @@ const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userSt
   }, [isCoolingDown]);
 
   const onModalClose = () => {
-    setUserStatus(prev => ({ ...prev, isEmergency: false }));
+    // setUserStatus(prev => ({ ...prev, isEmergency: false }));
+    dispatch({ type:'ALERT',payload:{ isEmergency: false } });
     setOpenModal(false);
     setIsCoolingDown(true);
   };
@@ -67,7 +56,10 @@ const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userSt
     onSubscribe();
   };
 
-
+  const onDisconnect = () => {
+    dispatch({ type: 'DISCONNECT' });
+    console.log('vital history: ', userVital);
+  };
 
   return (
     <>
@@ -113,7 +105,7 @@ const Dashboard = ({ userVital, onSubscribe, onDisconnect, setUserStatus, userSt
         </div>
       </div>
       <div className='widget__container'>
-        {widgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
+        {defaultWidgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
         <div className='widget--line-graph'>
           <Typography variant='subtitle2'>Heart rate history</Typography>
           <ParentSize>{(width) => <StreamlineGraph

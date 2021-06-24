@@ -14,20 +14,3 @@ export const useResizeObserver = (callback, element) => {
     };
   }, [element.current]);
 };
-
-// export const useDevice = (config) => {
-
-//   const [device, setDevice] = useState(null);
-
-//   const getDevice = async () => {
-//     device = await navigator.bluetooth.requestDevice(CONFIG);
-//     setDevice(device);
-//   };
-
-//   useEffect(async () => {
-//     if (navigator.bluetooth) {
-//       getDevice();
-//     }
-//   }, []);
-//   return device;
-// };

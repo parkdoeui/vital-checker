@@ -1,47 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
-import vitalHistory from '../model/vitalHistory';
+// import vitalHistory from '../model/vitalHistory';
+import { DashboardContext } from '../context/DashboardContext';
 const TIME_INTERVAL = 1000;
 const signal = [];
-const rollbackCount = 15;
-
-const defaultUserStatus = {
-  isConnected: false,
-  isEmergency: false,
-  deviceName: null,
-  startTime: null,
-};
-
-const defaultOxyData = {
-  spo2: 0,
-  heartRate: 0,
-  heartGraph: [],
-  elapsedTime: '00:00:00',
-};
-
-const userVital = new vitalHistory('Do Park',
-  process.env.REACT_APP_SERVICE_UUID,
-  process.env.REACT_APP_CHT_UUID);
+const rollbackCount = 30;
 
 const DashboardController = () => {
 
-  const [userStatus, setUserStatus] = useState(defaultUserStatus);
-  const [BLE, setBLE] = useState(null);
-  const [oxyData, setOxyData] = useState(defaultOxyData);
-  const [vitalSnapshot, setVitalSnapshot] = useState([]);
+  const { dispatch, state } = useContext(DashboardContext);
+  const { userStatus, userVital, vitalSnapshot } = state;
 
   useEffect(() => {
     if (userStatus.isConnected && userStatus.startTime) {
       const currentTime = setInterval(() => {
-
         const elapsedTime = getTime(userStatus.startTime);
-
-        setOxyData(prev => {
-          userVital.add(prev);
-          return { ...prev, elapsedTime: elapsedTime };
-        });
-
+        dispatch({ type: 'RECORD_ELAPSED_TIME', payload: { elapsedTime } });
       }, TIME_INTERVAL);
 
       return () => {
@@ -52,40 +27,19 @@ const DashboardController = () => {
   }, [userStatus.isConnected, userStatus.startTime]);
 
   useEffect(() => {
-    const newSnapshot = userVital.storage.slice(rollbackCount * -1);
-    setVitalSnapshot(newSnapshot);
+    dispatch({ type: 'RECORD_SNAPSHOT' });
   },[JSON.stringify(userVital.storage)]);
 
 
   useEffect(() => {
     if (vitalSnapshot.length >= rollbackCount) {
-      const isUserInComa = checkVitalAnomalies(vitalSnapshot);
-      setUserStatus(prev => ({ ...prev, isEmergency: isUserInComa }));
+      const isEmergency = checkVitalAnomalies(vitalSnapshot);
+      dispatch({ type: 'ALERT', payload: { isEmergency } });
     }
   }, [JSON.stringify(vitalSnapshot)]);
 
   const onConnected = async (device) => {
-    setUserStatus(prev => ({
-      ...prev,
-      isConnected: true,
-      deviceName: device.name,
-      startTime: new Date(),
-    }));
-  };
-
-  const onDisconnect = () => {
-    if (BLE) {
-      BLE.gatt.disconnect();
-    }
-    setUserStatus(prev =>
-      ({
-        ...prev,
-        isConnected: false,
-        deviceName: null,
-        startTime: null,
-      }));
-    setOxyData(defaultOxyData);
-    console.log('vital history: ', userVital);
+    dispatch({ type: 'CONNECT', payload: { device } });
   };
 
   //This belongs to Model
@@ -99,11 +53,14 @@ const DashboardController = () => {
       if (count === BREAK_POINT && signal.length > 0) {
         const identifier = signal[3];
         if (identifier === GRAPH) {
-          //this will potentially remove useEffect get time
-          setOxyData(prev => ({ ...prev, heartGraph: signal.slice(5, 10) }));
+          const heartGraph = signal.slice(5, 10);
+          dispatch({ type: 'RECORD_GRAPH_DATA', payload: { heartGraph } });
+
         }
         if (identifier === VITAL) {
-          setOxyData(prev => ({ ...prev, spo2: signal[5], heartRate: signal[6] }));
+          const spo2 = signal[5];
+          const heartRate = signal[6];
+          dispatch({ type: 'RECORD_VITAL_DATA', payload: { spo2, heartRate } });
         }
         signal.length = 0;
       }
@@ -121,23 +78,19 @@ const DashboardController = () => {
     };
     try {
       const device = await navigator.bluetooth.requestDevice(CONFIG);
-      setBLE(device);
       onConnected(device);
-      device.addEventListener('gattserverdisconnected', onDisconnect);
+      device.addEventListener('gattserverdisconnected', () => dispatch({ type:'DISCONNECT' }));
       const server = await device.gatt.connect();
       const service = await server.getPrimaryService(SERVICE_UUID);
       const characteristic = await service.getCharacteristic(CHT_UUID);
       const oximetry = await characteristic.startNotifications();
       oximetry.addEventListener('characteristicvaluechanged', handleNotifications);
-
     } catch (error) {
-
       alert(error);
-
     }
   };
 
-  return <Dashboard userVital={userVital} setUserStatus={setUserStatus} onDisconnect={onDisconnect} onSubscribe={onSubscribe} userStatus={userStatus} oxyData={oxyData}/>;
+  return <Dashboard onSubscribe={onSubscribe}/>;
 };
 
 export default DashboardController;
