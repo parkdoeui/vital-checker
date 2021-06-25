@@ -1,4 +1,4 @@
-import vitalHistory from './model/vitalHistory';
+import storage from './model/storage';
 
 export const defaultWidgets = [{
   accessor: 'heartRate',
@@ -30,7 +30,16 @@ export const defaultOxyData = {
   elapsedTime: '00:00:00',
 };
 
-export const defaultVital = new vitalHistory('Do Park',
+export const defaultVital = new storage(
   process.env.REACT_APP_SERVICE_UUID,
   process.env.REACT_APP_CHT_UUID);
 
+export const initialState = {
+  userStatus: defaultUserStatus,
+  oxyData: defaultOxyData,
+  userVital: defaultVital,
+  vitalSnapshot: [],
+  device: null,
+  oximetry: null,
+  rollbackCount: 30,
+};

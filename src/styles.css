@@ -18,6 +18,12 @@
   --success: 0, 118, 196;
 }
 
+body {
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow-y: scroll;
+}
+
 .title {
   font-size: 60px;
   font-weight: 600;
@@ -92,12 +98,6 @@
 
 }
 
-/* .status-bar__message::before {
-  content: "•";
-  font-size: 20px;
-  color: var(--primary);
-} */
-
 .btn__primary {
   border-radius: 6px;
   border: none;
@@ -127,7 +127,7 @@
   margin-left: 8px;
 }
 
-.btn__connect:hover {
+.btn__primary--connect:hover {
   background-color: #fff;
   border:var(--primary) 1px solid;
   color: var(--primary);

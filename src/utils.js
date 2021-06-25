@@ -1,6 +1,6 @@
 export const checkVitalAnomalies = (vitalSnapshot) => {
   const HR_MAX = 140;
-  const HR_MIN = 40;
+  const HR_MIN = 39;
   const SPO2_MIN = 80;
   const testRange = [...vitalSnapshot];
   const lastVital = testRange.pop();

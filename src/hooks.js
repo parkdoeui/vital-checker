@@ -6,11 +6,11 @@ export const useResizeObserver = (callback, element) => {
   const observer = useRef(null);
 
   useEffect(() => {
-    const resizeObserverOrPolyfill = ResizeObserver;
-    observer.current = new resizeObserverOrPolyfill(callback);
-    observer.current.observe(element.current);
-    return () => {
-      observer.current.unobserve(element.current);
-    };
+    if (element.current) {
+      const resizeObserverOrPolyfill = ResizeObserver;
+      observer.current = new resizeObserverOrPolyfill(callback);
+      observer.current.observe(element.current);
+    }
+
   }, [element.current]);
 };

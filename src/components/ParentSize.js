@@ -12,9 +12,7 @@ const ParentSize = ({ children }) => {
       setParentWidth(parentDiv.clientWidth - parseInt(padding) * 2);
     }
   };
-
   useResizeObserver(onResize, divRef);
-
   return (
     <div ref={divRef}>
       {children(parentWidth)}

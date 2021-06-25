@@ -1,15 +1,5 @@
 import React, { createContext, useReducer } from 'react';
-import { defaultUserStatus, defaultOxyData, defaultVital } from '../configs';
-
-const rollbackCount = 30;
-
-const initialState = {
-  userStatus: defaultUserStatus,
-  oxyData: defaultOxyData,
-  userVital: defaultVital,
-  vitalSnapshot: [],
-  device: null,
-};
+import { initialState, defaultOxyData } from '../configs';
 
 export const DashboardContext = createContext(initialState);
 
@@ -17,27 +7,36 @@ const reducer = (state, action) => {
   switch (action.type) {
 
     case 'CONNECT': {
-      const { device } = action.payload;
+      const { device, oximetry } = action.payload;
       const userStatus = {
         ...state.userStatus,
         isConnected: true,
         deviceName: device.name,
         startTime: new Date(),
       };
-      return { ...state, userStatus, device };
+      return { ...state, userStatus, device, oximetry };
     }
 
     case 'DISCONNECT': {
       state.device.gatt.disconnect();
-      const userStatus = {
-        ...state.userStatus,
-        isConnected: false,
-        deviceName: null,
-        startTime: new Date(),
-      };
+      if (state.userStatus.isConnected) {
 
-      const oxyData = { ...defaultOxyData };
-      return { ...state, userStatus, oxyData };
+        const history = {
+          totalRunTime: state.oxyData.elapsedTime,
+          date: state.userStatus.startTime,
+        };
+        state.userVital.updateHistory(history);
+        const userStatus = {
+          ...state.userStatus,
+          isConnected: false,
+          deviceName: null,
+          startTime: new Date(),
+        };
+
+        const oxyData = { ...defaultOxyData };
+        return { ...state, userStatus, oxyData };
+      }
+      return { ...state };
     }
 
     case 'ALERT': {
@@ -47,7 +46,9 @@ const reducer = (state, action) => {
     }
 
     case 'RECORD_SNAPSHOT': {
-      const vitalSnapshot = state.userVital.storage.slice(rollbackCount * -1);
+      //rollback count determines how many seconds back
+      //the app will trace back oxyData.
+      const vitalSnapshot = state.userVital.vitalLog.slice(state.rollbackCount * -1);
       return { ...state, vitalSnapshot };
     }
 
@@ -66,7 +67,7 @@ const reducer = (state, action) => {
     case 'RECORD_ELAPSED_TIME': {
       const { elapsedTime } = action.payload;
       const oxyData = { ...state.oxyData, elapsedTime };
-      state.userVital.add(oxyData);
+      state.userVital.updateLog(oxyData);
       return { ...state, oxyData };
     }
   }
