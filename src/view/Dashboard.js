@@ -5,24 +5,11 @@ import emergencyAudio from '../assets/warning.ogg';
 import StreamlineGraph from '../components/StreamlineGraph';
 import ParentSize from '../components/ParentSize';
 import { DashboardContext } from '../context/DashboardContext';
-import { defaultWidgets } from '../configs';
+import { defaultTabslist, defaultWidgets, defaultLineGraphs, defaultHistoryWidgets } from '../configs';
+import { formatDate, getAverage } from '../utils';
 
 const COOLDOWN_TIME = 10000;
-
 const audio = new Audio(emergencyAudio);
-
-const tabsList = [{
-  name: 'Dashboard 📈',
-  id: 'dashboard',
-},
-{
-  name: 'History 📘',
-  id: 'history',
-},
-{
-  name: 'Settings ⚙️',
-  id: 'settings',
-}];
 
 const Dashboard = ({ onSubscribe, onDisconnect }) => {
   const { dispatch, state } = useContext(DashboardContext);
@@ -30,7 +17,9 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
-  const [currentTab, setCurrentTab] = useState(tabsList[0].id);
+  const [currentTab, setCurrentTab] = useState(defaultTabslist[0].id);
+  const [currentHistory, setCurrentHistory] = useState(null);
+
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
@@ -52,7 +41,6 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
   }, [isCoolingDown]);
 
   const onModalClose = () => {
-    // setUserStatus(prev => ({ ...prev, isEmergency: false }));
     dispatch({ type: 'ALERT', payload: { isEmergency: false } });
     setOpenModal(false);
     setIsCoolingDown(true);
@@ -68,10 +56,6 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
     }
     onSubscribe();
   };
-
-  // const onDisconnect = () => {
-  //   dispatch({ type: 'DISCONNECT' });
-  // };
 
   return (
     <>
@@ -118,7 +102,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
         </div>
       </div>
       <div className='tabs'>
-        {tabsList.map((tab, idx) =>
+        {defaultTabslist.map((tab, idx) =>
           <button
             key={idx}
             className={`tab${tab.id === currentTab ? '--active' : ''}`}
@@ -128,66 +112,62 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
         )}
       </div>
       {currentTab === 'dashboard' &&
-        <div className='widget__container'>
-          {defaultWidgets.map(({ accessor, unit, description }, idx) => <Widget key={idx} value={oxyData[accessor]} unit={unit} description={description} />)}
-          <div className='widget--line-graph'>
-            <Typography variant='subtitle2'>Heart rate history</Typography>
-            <ParentSize>{(width) => <StreamlineGraph
-              width={width}
-              height={300}
-              data={userVital.vitalLog}
-              config={{
-                key: 'heartRate',
-                xAxisRange: 'auto',
-                yAxisRange: [0, 160],
-                style: {
-                  color: '#fa0000',
-                  strokeWidth: 5,
-                },
-                threshold: {
-                  max: 130,
-                  min: 30,
-                  unit: 'bpm',
-                },
-              }} />
-            }</ParentSize>
-          </div>
-          <div className='widget--line-graph'>
-            <Typography variant='subtitle2'>SpO2 history</Typography>
-            <ParentSize>
-              {(width) => <StreamlineGraph
+        <div className='dashboard__container'>
+          {defaultWidgets.map(({ accessor, unit, description }, idx) =>
+            <Widget key={idx}
+              value={oxyData[accessor]}
+              unit={unit}
+              description={description}
+            />)}
+          {defaultLineGraphs.map(({ title, height, config }, idx) =>
+            <div key={idx} className='widget--line-graph'>
+              <Typography variant='subtitle2'>{title}</Typography>
+              <ParentSize>{(width) => <StreamlineGraph
                 width={width}
-                height={300}
+                height={height}
                 data={userVital.vitalLog}
-                config={{
-                  key: 'spo2',
-                  xAxisRange: 'auto',
-                  yAxisRange: [70, 110],
-                  style: {
-                    color: '#0075FF',
-                    strokeWidth: 5,
-                  },
-                  threshold: {
-                    max: null,
-                    min: 80,
-                    unit: '%',
-                  },
-                }} />
-              }</ParentSize>
-          </div>
+                config={config} />}
+              </ParentSize>
+            </div>)}
+
         </div>}
       {currentTab === 'history' &&
         <div>
-          <div>
-            {userVital.history.map(({ runTime, date }) =>
-              <div>
-                <Typography variant='body'>
-                  {`Total run time: ${runTime}`}
-                </Typography>
-                <Typography variant='body'>
-                  {`Date: ${date}`}
-                </Typography>
-              </div>)}
+          <div className='history__container'>
+            <div className='history__log'>
+              {userVital.history.map(({ runTime, date }, idx) =>
+                <div key={idx} onClick={() => setCurrentHistory(userVital.history[idx])}>
+                  <Typography variant='body'>
+                    {`Total run time: ${runTime}`}
+                  </Typography>
+                  <Typography variant='body'>
+                    {`Date: ${formatDate(date)}`}
+                  </Typography>
+                </div>,
+              )}
+            </div>
+            {currentHistory !== null && <div className='history__analysis'>
+              <div className='history__analysis--widget'>
+                {defaultHistoryWidgets.map(({ accessor, unit, description }, idx) =>
+                  <Widget
+                    key={idx}
+                    value={getAverage(currentHistory.vitalLog.map((d) => d[accessor]))}
+                    unit={unit}
+                    description={description}
+                  />,
+                )}
+              </div>
+              {defaultLineGraphs.map(({ title, height, config }, idx) =>
+                <div key={idx} className='widget--line-graph'>
+                  <Typography variant='subtitle2'>{title}</Typography>
+                  <ParentSize>{(width) => <StreamlineGraph
+                    width={width}
+                    height={height}
+                    data={currentHistory.vitalLog}
+                    config={config} />}
+                  </ParentSize>
+                </div>)}
+            </div>}
           </div>
         </div>
       }

@@ -56,11 +56,38 @@ body.dark-mode {
 
 }
 
-.widget__container {
+.history__container,
+.dashboard__container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
   margin: var(--spacing10);
+}
+
+.history__container {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.history__log {
+  grid-column: 1;
+  border-radius: 4px;
+  border: 1px solid var(--secondary10);
+  padding: var(--spacing10);
+}
+
+.history__analysis {
+  display: grid;
+  grid-column: span 3;
+  gap: var(--spacing10);
+
+}
+
+.history__analysis--widget {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  grid-column: span 3;
+
 }
 
 .widget,
@@ -74,6 +101,7 @@ body.dark-mode {
 
 .widget--line-graph {
   grid-column: span 3;
+  gap: var(--spacing10);
 }
 
 .status-bar__prompt--warning,
