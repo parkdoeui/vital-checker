@@ -22,7 +22,7 @@ const reducer = (state, action) => {
       if (state.userStatus.isConnected) {
 
         const history = {
-          totalRunTime: state.oxyData.elapsedTime,
+          runTime: state.oxyData.elapsedTime,
           date: state.userStatus.startTime,
         };
         state.userVital.updateHistory(history);

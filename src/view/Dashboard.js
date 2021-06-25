@@ -176,10 +176,18 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
               }</ParentSize>
           </div>
         </div>}
-      {currentTab === 'History' &&
+      {currentTab === 'history' &&
         <div>
           <div>
-
+            {userVital.history.map(({ runTime, date }) =>
+              <div>
+                <Typography variant='body'>
+                  {`Total run time: ${runTime}`}
+                </Typography>
+                <Typography variant='body'>
+                  {`Date: ${date}`}
+                </Typography>
+              </div>)}
           </div>
         </div>
       }
