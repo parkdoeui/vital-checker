@@ -1,13 +1,13 @@
 export const checkVitalAnomalies = (vitalSnapshot) => {
   const HR_MAX = 140;
-  const HR_MIN = 40;
+  const HR_MIN = 39;
   const SPO2_MIN = 80;
   const testRange = [...vitalSnapshot];
   const lastVital = testRange.pop();
 
   const test1 = testRange.every(({ heartRate, spo2 }) =>
     heartRate === lastVital.heartRate &&
-        spo2 === lastVital.spo2);
+    spo2 === lastVital.spo2);
 
   const test2 = testRange.some(({ heartRate, spo2 }) => (heartRate > 0 && spo2 > 0) && (heartRate > HR_MAX || heartRate < HR_MIN || spo2 < SPO2_MIN));
 
@@ -28,9 +28,20 @@ export const getTime = (startTime) => {
 };
 
 export const getCharacteristicUUID = () => {
-  return prompt("Type characteristics UUID");
-}
+  return prompt('Type characteristics UUID');
+};
 
 export const getServiceUUID = () => {
-  return prompt("Type service UUID");
-}
+  return prompt('Type service UUID');
+};
+
+export const formatDate = (date) => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  return `${months[month]} ${day}, ${year}`;
+};
+
+export const getAverage = (data) => (data.reduce((acc, val) => { return acc + val; }, 0) / data.length).toFixed(1);
+

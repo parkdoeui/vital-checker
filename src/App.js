@@ -1,8 +1,13 @@
 import React from 'react';
+import { DashboardProvider } from './context/DashboardContext';
 import DashboardController from './controller/DashboardController';
 
 const App = () => {
-  return <DashboardController/>;
+  return (
+    <DashboardProvider>
+      <DashboardController/>
+    </DashboardProvider>
+  );
 };
 
 
