@@ -1,5 +1,5 @@
 :root {
-  --primary:#219653;
+  --primary: 50, 84, 168;
   --secondary10: #ccc;
   --secondary20: #999;
   --secondary30: #666;
@@ -8,6 +8,7 @@
   --shadow20:rgba(12, 12, 13, 0.15);
   --shadow30:rgba(12, 12, 13, 0.2);
   --shadow40:rgba(12, 12, 13, 0.25);
+  --spacing5: 8px;
   --spacing10: 16px;
   --spacing20: 24px;
   --spacing30: 32px;
@@ -22,6 +23,10 @@ body {
   max-width: 1440px;
   margin: 0 auto;
   overflow-y: scroll;
+}
+
+body.dark-mode {
+  background-color: #000;
 }
 
 .title {
@@ -47,7 +52,8 @@ body {
 .status-bar {
   display: flex;
   justify-content: space-between;
-  margin: var(--spacing10);
+  padding: var(--spacing10);
+
 }
 
 .widget__container {
@@ -98,10 +104,34 @@ body {
 
 }
 
+.tabs {
+  padding: var(--spacing10);
+}
+
+.tab,
+.tab--active {
+  border: none;
+  font-size: 16px;
+  color: var(--secondary20);
+  background: none;
+  padding: var(--spacing5) var(--spacing30);
+  padding-left: 0px;
+}
+
+.tab:hover {
+  color: rgba(var(--primary),0.8);
+  transition: all .3s;
+}
+
+.tab--active {
+  color: rgba(var(--primary),1.0);
+  /* border-bottom: 3px solid; */
+}
+
 .btn__primary {
   border-radius: 6px;
   border: none;
-  background-color: var(--primary);
+  background-color: rgba(var(--primary),1.0);
   color: #fff;
   font-size: 18px;
   font-weight: 400;
@@ -129,8 +159,8 @@ body {
 
 .btn__primary--connect:hover {
   background-color: #fff;
-  border:var(--primary) 1px solid;
-  color: var(--primary);
+  border:rgba(var(--primary), 1.0) 1px solid;
+  color: rgba(var(--primary), 1.0);
   transition: all .3s;
 }
 
