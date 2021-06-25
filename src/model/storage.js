@@ -10,10 +10,11 @@ class storage {
   updateHistory(data) {
     const historyData = {
       ...data,
-      vitalLog: this.vitalLog,
+      vitalLog: [...this.vitalLog],
     };
     this.history.push(historyData);
     this.vitalLog.length = 0;
+    console.table(this.history);
   }
 
   updateLog(data) {

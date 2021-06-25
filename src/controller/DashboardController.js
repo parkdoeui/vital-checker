@@ -53,7 +53,7 @@ const DashboardController = () => {
 
   useEffect(() => {
     dispatch({ type: 'RECORD_SNAPSHOT' });
-  },[userVital.vitalLog.length]);
+  }, [userVital.vitalLog.length]);
 
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const DashboardController = () => {
 
   const onDisconnect = () => {
     dispatch({ type: 'DISCONNECT' });
-    console.log(state.userVital.history, userStatus.isConnected);
+    console.table(state.userVital.history);
   };
 
   //This belongs to Model
@@ -114,13 +114,13 @@ const DashboardController = () => {
       const characteristic = await service.getCharacteristic(chtUUID);
       const oximetry = await characteristic.startNotifications();
       // oximetry.addEventListener('characteristicvaluechanged', handleNotifications);
-      onConnected(device,oximetry);
+      onConnected(device, oximetry);
     } catch (error) {
       alert(error);
     }
   };
 
-  return <Dashboard onDisconnect={onDisconnect} onSubscribe={onSubscribe}/>;
+  return <Dashboard onDisconnect={onDisconnect} onSubscribe={onSubscribe} />;
 };
 
 export default DashboardController;
