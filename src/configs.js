@@ -1,6 +1,6 @@
 import storage from './model/storage';
 
-export const defaultWidgets = [{
+export const dashboardWidgets = [{
   accessor: 'heartRate',
   unit: 'bpm',
   description: 'Heart Rate 💖',
@@ -16,7 +16,7 @@ export const defaultWidgets = [{
   description: 'Elapsed Time 🕒',
 }];
 
-export const defaultHistoryWidgets = [{
+export const historyWidgets = [{
   accessor: 'heartRate',
   unit: 'bpm',
   description: 'Average Heart Rate 💖',
@@ -27,7 +27,7 @@ export const defaultHistoryWidgets = [{
   description: 'Average SPO2 💨',
 }];
 
-export const defaultLineGraphs = [{
+export const dashboardLineGraphs = [{
   title: 'Heart rate history',
   height: 300,
   config: {
@@ -36,7 +36,7 @@ export const defaultLineGraphs = [{
     yAxisRange: [0, 160],
     style: {
       color: '#fa0000',
-      strokeWidth: 5,
+      strokeWidth: 3,
     },
     threshold: {
       max: 130,
@@ -53,7 +53,7 @@ export const defaultLineGraphs = [{
     yAxisRange: [70, 110],
     style: {
       color: '#0075FF',
-      strokeWidth: 5,
+      strokeWidth: 3,
     },
     threshold: {
       max: null,
@@ -62,6 +62,44 @@ export const defaultLineGraphs = [{
     },
   },
 }];
+
+export const historyLineGraphs = [{
+  title: 'Heart rate history',
+  height: 300,
+  config: {
+    key: 'heartRate',
+    xAxisRange: 'auto',
+    yAxisRange: [0, 160],
+    style: {
+      color: '#fa0000',
+      strokeWidth: 3,
+    },
+    threshold: {
+      max: 130,
+      min: 30,
+      unit: 'bpm',
+    },
+    screeningMode: true,
+  },
+}, {
+  title: 'Sp02 history',
+  height: 300,
+  config: {
+    key: 'spo2',
+    xAxisRange: 'auto',
+    yAxisRange: [70, 110],
+    style: {
+      color: '#0075FF',
+      strokeWidth: 3,
+    },
+    threshold: {
+      max: null,
+      min: 80,
+      unit: '%',
+    },
+    screeningMode: true,
+  },
+}]
 
 export const defaultUserStatus = {
   isConnected: false,
@@ -81,7 +119,7 @@ export const defaultVital = new storage(
   process.env.REACT_APP_SERVICE_UUID,
   process.env.REACT_APP_CHT_UUID);
 
-export const defaultTabslist = [{
+export const tabsList = [{
   name: 'Dashboard 📈',
   id: 'dashboard',
 },

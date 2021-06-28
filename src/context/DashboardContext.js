@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from 'react';
 import { initialState, defaultOxyData } from '../configs';
+import { getSummary } from '../utils';
 
 export const DashboardContext = createContext(initialState);
 
@@ -25,6 +26,7 @@ const reducer = (state, action) => {
           runTime: state.oxyData.elapsedTime,
           date: state.userStatus.startTime,
         };
+        getSummary(state.userVital.vitalLog);
         state.userVital.updateHistory(history);
         const userStatus = {
           ...state.userStatus,
@@ -60,7 +62,11 @@ const reducer = (state, action) => {
 
     case 'RECORD_VITAL_DATA': {
       const { spo2, heartRate } = action.payload;
-      const oxyData = { ...state.oxyData, spo2, heartRate };
+      const oxyData = {
+        ...state.oxyData,
+        heartRate: heartRate ?? state.oxyData.heartRate,
+        spo2: spo2 ?? state.oxyData.spo2,
+      };
       return { ...state, oxyData };
     }
 

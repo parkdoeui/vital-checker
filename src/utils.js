@@ -45,3 +45,18 @@ export const formatDate = (date) => {
 
 export const getAverage = (data) => (data.reduce((acc, val) => { return acc + val; }, 0) / data.length).toFixed(1);
 
+export const getSummary = (data) => {
+  const spo2 = data.map(({ spo2 }) => spo2).filter((val) => val > 0);
+  const heartRate = data
+    .map(({ heartRate }) => heartRate)
+    .filter((val) => val > 0);
+  const filteredSpo2 = spo2.filter((val) => val < 90);
+  const filteredHR = heartRate.filter((val) => val < 50);
+  console.log("Min spo2:", Math.min(...spo2));
+  console.log("Min HR:", Math.min(...heartRate));
+  console.log("Max HR:", Math.max(...heartRate));
+  console.log(`SP02 below 90%: ${(filteredSpo2.length / spo2.length) * 100}%`);
+  console.log(
+    `HR below 50bpm: ${(filteredHR.length / heartRate.length) * 100}%`
+  );
+};

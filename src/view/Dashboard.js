@@ -5,7 +5,7 @@ import emergencyAudio from '../assets/warning.ogg';
 import StreamlineGraph from '../components/StreamlineGraph';
 import ParentSize from '../components/ParentSize';
 import { DashboardContext } from '../context/DashboardContext';
-import { defaultTabslist, defaultWidgets, defaultLineGraphs, defaultHistoryWidgets } from '../configs';
+import { tabsList, dashboardWidgets, dashboardLineGraphs, historyWidgets, historyLineGraphs } from '../configs';
 import { formatDate, getAverage } from '../utils';
 
 const COOLDOWN_TIME = 10000;
@@ -17,7 +17,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
   const { isConnected, isEmergency, deviceName } = userStatus;
   const [openModal, setOpenModal] = useState(false);
   const [isCoolingDown, setIsCoolingDown] = useState(false);
-  const [currentTab, setCurrentTab] = useState(defaultTabslist[0].id);
+  const [currentTab, setCurrentTab] = useState(tabsList[0].id);
   const [currentHistory, setCurrentHistory] = useState(null);
 
   const serviceRef = useRef(null);
@@ -102,7 +102,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
         </div>
       </div>
       <div className='tabs'>
-        {defaultTabslist.map((tab, idx) =>
+        {tabsList.map((tab, idx) =>
           <button
             key={idx}
             className={`tab${tab.id === currentTab ? '--active' : ''}`}
@@ -113,13 +113,13 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
       </div>
       {currentTab === 'dashboard' &&
         <div className='dashboard__container'>
-          {defaultWidgets.map(({ accessor, unit, description }, idx) =>
+          {dashboardWidgets.map(({ accessor, unit, description }, idx) =>
             <Widget key={idx}
               value={oxyData[accessor]}
               unit={unit}
               description={description}
             />)}
-          {defaultLineGraphs.map(({ title, height, config }, idx) =>
+          {dashboardLineGraphs.map(({ title, height, config }, idx) =>
             <div key={idx} className='widget--line-graph'>
               <Typography variant='subtitle2'>{title}</Typography>
               <ParentSize>{(width) => <StreamlineGraph
@@ -148,7 +148,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
             </div>
             {currentHistory !== null && <div className='history__analysis'>
               <div className='history__analysis--widget'>
-                {defaultHistoryWidgets.map(({ accessor, unit, description }, idx) =>
+                {historyWidgets.map(({ accessor, unit, description }, idx) =>
                   <Widget
                     key={idx}
                     value={getAverage(currentHistory.vitalLog.map((d) => d[accessor]))}
@@ -157,11 +157,11 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
                   />,
                 )}
               </div>
-              {defaultLineGraphs.map(({ title, height, config }, idx) =>
+              {historyLineGraphs.map(({ title, height, config }, idx) =>
                 <div key={idx} className='widget--line-graph'>
                   <Typography variant='subtitle2'>{title}</Typography>
                   <ParentSize>{(width) => <StreamlineGraph
-                    width={width}
+                    width={1400}
                     height={height}
                     data={currentHistory.vitalLog}
                     config={config} />}
