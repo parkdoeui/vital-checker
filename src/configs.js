@@ -99,7 +99,7 @@ export const historyLineGraphs = [{
     },
     screeningMode: true,
   },
-}]
+}];
 
 export const defaultUserStatus = {
   isConnected: false,
@@ -113,6 +113,7 @@ export const defaultOxyData = {
   heartRate: 0,
   heartGraph: [],
   elapsedTime: '00:00:00',
+  rawTime: 0,
 };
 
 export const defaultVital = new storage(

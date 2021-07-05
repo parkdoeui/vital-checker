@@ -23,7 +23,7 @@ export const getTime = (startTime) => {
 
   const prefix = '0';
   const time = `${h < 10 ? prefix + h : h}:${m < 10 ? prefix + m : m}:${s < 10 ? prefix + s : s}`;
-  return time;
+  return { formattedTime: time, rawTime: elapsedTime };
 
 };
 
@@ -52,11 +52,11 @@ export const getSummary = (data) => {
     .filter((val) => val > 0);
   const filteredSpo2 = spo2.filter((val) => val < 90);
   const filteredHR = heartRate.filter((val) => val < 50);
-  console.log("Min spo2:", Math.min(...spo2));
-  console.log("Min HR:", Math.min(...heartRate));
-  console.log("Max HR:", Math.max(...heartRate));
+  console.log('Min spo2:', Math.min(...spo2));
+  console.log('Min HR:', Math.min(...heartRate));
+  console.log('Max HR:', Math.max(...heartRate));
   console.log(`SP02 below 90%: ${(filteredSpo2.length / spo2.length) * 100}%`);
   console.log(
-    `HR below 50bpm: ${(filteredHR.length / heartRate.length) * 100}%`
+    `HR below 50bpm: ${(filteredHR.length / heartRate.length) * 100}%`,
   );
 };

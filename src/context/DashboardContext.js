@@ -34,7 +34,7 @@ const reducer = (state, action) => {
           deviceName: null,
           startTime: new Date(),
         };
-
+        console.log(state.userVital);
         const oxyData = { ...defaultOxyData };
         return { ...state, userStatus, oxyData };
       }
@@ -72,7 +72,13 @@ const reducer = (state, action) => {
 
     case 'RECORD_ELAPSED_TIME': {
       const { elapsedTime } = action.payload;
-      const oxyData = { ...state.oxyData, elapsedTime };
+      const oxyData = { ...state.oxyData, elapsedTime: elapsedTime.formattedTime, rawTime: elapsedTime.rawTime };
+      const testValue = elapsedTime.rawTime - state.oxyData.rawTime;
+      console.log(testValue);
+      if (testValue > 1100) {
+        // debugger;
+        console.log(state.userVital);
+      }
       state.userVital.updateLog(oxyData);
       return { ...state, oxyData };
     }

@@ -113,7 +113,6 @@ const DashboardController = () => {
       const service = await server.getPrimaryService(serviceUUID);
       const characteristic = await service.getCharacteristic(chtUUID);
       const oximetry = await characteristic.startNotifications();
-      // oximetry.addEventListener('characteristicvaluechanged', handleNotifications);
       onConnected(device, oximetry);
     } catch (error) {
       alert(error);
