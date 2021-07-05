@@ -43,8 +43,12 @@ body {
   margin-block: 0.5em;
 }
 
-.body {
+.body,
+.body-bold {
   font-size: 14px;
+}
+.body-bold {
+  font-weight: 700;
 }
 
 .status-bar {
@@ -154,28 +158,14 @@ body {
   /* border-bottom: 3px solid; */
 }
 
-.btn__primary {
-  border-radius: 6px;
-  border: none;
-  background-color: rgba(var(--primary),1.0);
-  color: #fff;
-  font-size: 18px;
-  font-weight: 400;
-  padding: 16px 16px;
-}
-
-.btn__primary:hover {
-  background-color:#157d42;
-   color: #fff;
-  transition: all .3s;
-}
+.btn__tooltip--close,
 .btn__primary--disconnect,
 .btn__primary--connect {
   margin: auto 0;
   border-radius: 6px;
   border: none;
   background-color: rgba(var(--primary),0.7);
-  color: #000;
+  color: rgba(179, 200, 255,1.0);
   font-size: 14px;
   font-weight: 600;
   padding: 0px 16px;
@@ -238,4 +228,18 @@ input {
   border-radius: 6px;
   border: 1px solid var(--secondary10);
   margin-left: 8px;
+}
+
+.streamline__tooltip {
+  background-color: #222;
+  box-shadow: 0px 4px 8px #000;
+  border-radius: 6px;
+  border: none;
+  padding: var(--spacing20);
+}
+
+.btn__tooltip--close {
+  width: 100%;
+  padding: var(--spacing5) var(--spacing10);
+  margin-left: 0px;
 }
