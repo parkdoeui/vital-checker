@@ -73,7 +73,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
   };
 
   useEffect(() => {
-    if (svgRef.current) {
+    if (svgRef.current && isInspected) {
       svgRef.current.addEventListener('mousedown', handleMouseDown);
       svgRef.current.addEventListener('mouseup', handleMouseUp);
       svgRef.current.addEventListener('mousemove', handleMouseMove);
@@ -85,7 +85,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
         svgRef.current.removeEventListener('mousemove', handleMouseMove);
       }
     };
-  }, [svgRef.current, mousePos.isDragged]);
+  }, [svgRef.current, mousePos.isDragged, isInspected]);
 
   const refinedData = data.filter(d => d[key] !== 0);
 
@@ -122,7 +122,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {tooltip.isOpen && <div className='streamline__tooltip' style={{ position: 'absolute', left: tooltip.position.x, top: tooltip.position.y }}>
+      {tooltip.isOpen && inspectionMode && <div className='streamline__tooltip' style={{ position: 'absolute', left: tooltip.position.x, top: tooltip.position.y }}>
         {tooltip.values !== null ? <>
           <Typography variant='body-bold'>Inspected data</Typography>
           <Typography variant='body'>{`Max: ${tooltip.values.max} ${unit}`}</Typography>
@@ -130,7 +130,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
           <Typography variant='body'>{`Average: ${tooltip.values.avg} ${unit}`}</Typography>
           <Typography variant='body'>{`Volume: ${tooltip.values.volume} %`}</Typography>
         </>
-          : <Typography>Data not available</Typography>}
+          : <Typography variant='body-bold'>Data not available</Typography>}
         <button className='btn__tooltip--close' onClick={tooltipOnClose}>Close</button>
       </div>}
       <svg ref={svgRef} width={width} height={height}>
@@ -160,9 +160,9 @@ const StreamlineGraph = ({ data, width, height, config }) => {
             <textPath xlinkHref={`#min-${key}`}>{`minimum ${min}${unit}`}</textPath>
           </text>
         </g>}
-        <path stroke='rbga(255,255,255,0)' fill={`url(#gradient-${key})`} d={`M0,${height} ` + path + ` v${height} L0,${height}`} />
+        <path stroke='rbga(255,255,255,0)' fill={`url(#gradient-${key})`} d={`M0,${height} ` + path + ` V${height} L0,${height}`} />
         <path stroke={color} fill='none' strokeWidth={strokeWidth} d={path} />
-        {isInspected && refinedData.map((d, i) => <circle key={i} cx={xScale(i)} cy={yScale(d[key])} r={strokeWidth} fill='white' />)}
+        {isInspected && inspectionMode && refinedData.map((d, i) => <circle key={i} cx={xScale(i)} cy={yScale(d[key])} r={strokeWidth} fill='white' />)}
       </svg>
     </div>
   );
