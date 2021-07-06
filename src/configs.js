@@ -60,6 +60,8 @@ export const dashboardLineGraphs = [{
       min: 80,
       unit: '%',
     },
+    inspectionMode: false,
+    isInspected: false,
   },
 }];
 
@@ -79,7 +81,8 @@ export const historyLineGraphs = [{
       min: 30,
       unit: 'bpm',
     },
-    screeningMode: true,
+    inspectionMode: true,
+    isInspected: false,
   },
 }, {
   title: 'Sp02 history',
@@ -97,7 +100,8 @@ export const historyLineGraphs = [{
       min: 80,
       unit: '%',
     },
-    screeningMode: true,
+    inspectionMode: true,
+    isInspected: false,
   },
 }];
 

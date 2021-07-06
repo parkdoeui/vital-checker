@@ -19,7 +19,8 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
   const [isCoolingDown, setIsCoolingDown] = useState(false);
   const [currentTab, setCurrentTab] = useState(tabsList[0].id);
   const [currentHistory, setCurrentHistory] = useState(null);
-
+  const [graphs, setGraphs] = useState(historyLineGraphs);
+  console.log(graphs);
   const serviceRef = useRef(null);
   const chtRef = useRef(null);
   useEffect(() => {
@@ -55,6 +56,15 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
       userVital.addUUIDs(serviceRef.current.value, chtRef.current.value);
     }
     onSubscribe();
+  };
+
+  const onInspection = (idx) => {
+    // const newStatus = !graphs[idx].config.isInspected;
+    setGraphs(prev => {
+      const n = prev.map((d, i) => i === idx ? { ...d, config: { ...d.config, isInspected: !d.config.isInspected } } : d);
+      console.log(n);
+      return n;
+    });
   };
 
   return (
@@ -157,11 +167,14 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
                   />,
                 )}
               </div>
-              {historyLineGraphs.map(({ title, height, config }, idx) =>
+              {graphs.map(({ title, height, config }, idx) =>
                 <div key={idx} className='widget--line-graph'>
-                  <Typography variant='subtitle2'>{title}</Typography>
+                  <div className='widget--line-graph__header'>
+                    <Typography variant='subtitle2'>{title}</Typography>
+                    {config.inspectionMode && <button className='btn__inspect' onClick={() => onInspection(idx)}>{config.isInspected ? 'Uninspect' : 'Inspect'}</button>}
+                  </div>
                   <ParentSize>{(width) => <StreamlineGraph
-                    width={1400}
+                    width={width}
                     height={height}
                     data={currentHistory.vitalLog}
                     config={config} />}

@@ -107,6 +107,11 @@ body {
   gap: var(--spacing10);
 }
 
+.widget--line-graph__header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .status-bar__prompt--warning,
 .status-bar__prompt--success {
   background-color: rgba(var(--warning), 0.2);
@@ -159,6 +164,7 @@ body {
   /* border-bottom: 3px solid; */
 }
 
+.btn__inspect,
 .btn__tooltip--close,
 .btn__primary--disconnect,
 .btn__primary--connect {
@@ -191,6 +197,26 @@ body {
   background-color: rgba(var(--warning), 0.8);
   color: #fff;
   transition: all .3s;
+}
+
+.btn__tooltip--close {
+  width: 100%;
+  padding: var(--spacing5) var(--spacing10);
+  margin-left: 0px;
+}
+
+.btn__inspect {
+  padding: var(--spacing5) var(--spacing10);
+  background-color: #222;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  color: #ccc;
+}
+
+.btn__inspect:hover {
+  background-color: #333;
+  color: #fff;
+  transition: 0.3s;
 }
 
 .modal__background {
@@ -239,10 +265,5 @@ input {
   padding: var(--spacing20);
 }
 
-.btn__tooltip--close {
-  width: 100%;
-  padding: var(--spacing5) var(--spacing10);
-  margin-left: 0px;
-}
 
 

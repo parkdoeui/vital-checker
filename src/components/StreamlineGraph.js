@@ -11,11 +11,10 @@ const mouseConfig = {
 
 const StreamlineGraph = ({ data, width, height, config }) => {
 
-  const { key, xAxisRange, yAxisRange, style, threshold, screeningMode } = config;
+  const { key, xAxisRange, yAxisRange, style, threshold, inspectionMode, isInspected } = config;
   const { color, strokeWidth } = style;
   const { max, min, unit } = threshold;
   const [mousePos, setMousePos] = useState(mouseConfig);
-  const [inspector, setInspector] = useState(false);
   const [tooltip, setTooltip] = useState({ isOpen: false, values: null });
   const svgRef = useRef();
 
@@ -134,7 +133,6 @@ const StreamlineGraph = ({ data, width, height, config }) => {
           : <Typography>Data not available</Typography>}
         <button className='btn__tooltip--close' onClick={tooltipOnClose}>Close</button>
       </div>}
-      <button onClick={() => setInspector(!inspector)}>{inspector ? 'Uninspect' : 'Inspect'}</button>
       <svg ref={svgRef} width={width} height={height}>
         <defs>
           <linearGradient id={`gradient-${key}`} gradientTransform="rotate(90)">
@@ -144,7 +142,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
         </defs>
         <rect x={mousePos.position.x} stroke={color} fill='rgba(0,0,0,0)' strokeDasharray='5 1' y={mousePos.position.y} width={mousePos.position.w} height={mousePos.position.h} />
         <rect x={mousePos.position.x} fill={color} opacity='0.1' y={mousePos.position.y} width={mousePos.position.w} height={mousePos.position.h} />
-        {!inspector && thresholdLines.max && <g>
+        {!isInspected && thresholdLines.max && <g>
           <path id={`max-${key}`} strokeDasharray="10,10" strokeWidth='2' stroke='#ccc' fill='none' strokeWidth='1' d={thresholdLines.max} />
           <text dy='-10' style={{
             fontSize: '12px',
@@ -153,7 +151,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
             <textPath xlinkHref={`#max-${key}`}>{`maximum ${max}${unit}`}</textPath>
           </text>
         </g>}
-        {!inspector && thresholdLines.min && <g>
+        {!isInspected && thresholdLines.min && <g>
           <path id={`min-${key}`} strokeDasharray="10,10" strokeWidth='2' stroke='#ccc' fill='none' strokeWidth='1' d={thresholdLines.min} />
           <text dy='20' style={{
             fontSize: '12px',
@@ -164,7 +162,7 @@ const StreamlineGraph = ({ data, width, height, config }) => {
         </g>}
         <path stroke='rbga(255,255,255,0)' fill={`url(#gradient-${key})`} d={`M0,${height} ` + path + ` v${height} L0,${height}`} />
         <path stroke={color} fill='none' strokeWidth={strokeWidth} d={path} />
-        {inspector && refinedData.map((d, i) => <circle key={i} cx={xScale(i)} cy={yScale(d[key])} r={strokeWidth} fill='white' />)}
+        {isInspected && refinedData.map((d, i) => <circle key={i} cx={xScale(i)} cy={yScale(d[key])} r={strokeWidth} fill='white' />)}
       </svg>
     </div>
   );
