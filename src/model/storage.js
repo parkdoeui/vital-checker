@@ -14,7 +14,6 @@ class storage {
     };
     this.history.push(historyData);
     this.vitalLog.length = 0;
-    console.table(this.history);
   }
 
   updateLog(data) {

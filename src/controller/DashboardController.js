@@ -87,8 +87,8 @@ const DashboardController = () => {
 
         }
         if (identifier === vital) {
-          const spo2 = signal[5];
-          const heartRate = signal[6];
+          const spo2 = null || signal[5];
+          const heartRate = null || signal[6];
           dispatch({ type: 'RECORD_VITAL_DATA', payload: { spo2, heartRate } });
         }
         signal.length = 0;
@@ -113,7 +113,6 @@ const DashboardController = () => {
       const service = await server.getPrimaryService(serviceUUID);
       const characteristic = await service.getCharacteristic(chtUUID);
       const oximetry = await characteristic.startNotifications();
-      // oximetry.addEventListener('characteristicvaluechanged', handleNotifications);
       onConnected(device, oximetry);
     } catch (error) {
       alert(error);

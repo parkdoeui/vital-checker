@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from 'react';
 import { initialState, defaultOxyData } from '../configs';
+import { getSummary } from '../utils';
 
 export const DashboardContext = createContext(initialState);
 
@@ -25,6 +26,7 @@ const reducer = (state, action) => {
           runTime: state.oxyData.elapsedTime,
           date: state.userStatus.startTime,
         };
+        getSummary(state.userVital.vitalLog);
         state.userVital.updateHistory(history);
         const userStatus = {
           ...state.userStatus,
@@ -32,7 +34,7 @@ const reducer = (state, action) => {
           deviceName: null,
           startTime: new Date(),
         };
-
+        console.log(state.userVital);
         const oxyData = { ...defaultOxyData };
         return { ...state, userStatus, oxyData };
       }
@@ -60,13 +62,23 @@ const reducer = (state, action) => {
 
     case 'RECORD_VITAL_DATA': {
       const { spo2, heartRate } = action.payload;
-      const oxyData = { ...state.oxyData, spo2, heartRate };
+      const oxyData = {
+        ...state.oxyData,
+        heartRate: heartRate ?? state.oxyData.heartRate,
+        spo2: spo2 ?? state.oxyData.spo2,
+      };
       return { ...state, oxyData };
     }
 
     case 'RECORD_ELAPSED_TIME': {
       const { elapsedTime } = action.payload;
-      const oxyData = { ...state.oxyData, elapsedTime };
+      const oxyData = { ...state.oxyData, elapsedTime: elapsedTime.formattedTime, rawTime: elapsedTime.rawTime };
+      const testValue = elapsedTime.rawTime - state.oxyData.rawTime;
+      console.log(testValue);
+      if (testValue > 1100) {
+        // debugger;
+        console.log(state.userVital);
+      }
       state.userVital.updateLog(oxyData);
       return { ...state, oxyData };
     }
