@@ -1,5 +1,5 @@
 import storage from './model/storage';
-
+import { getSavedVitals } from './lib/api/vitals';
 export const dashboardWidgets = [{
   accessor: 'heartRate',
   unit: 'bpm',

@@ -1,14 +1,14 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import { getVitals, createVitals, updateVitals, deleteVitals } from './controllers/userVitalctrl.js'
+import { getVitals, createVitals } from './controllers/userVitalctrl.js'
 
 const app = express();
 const router = express.Router();
 
 router.get('/', getVitals);
 router.post('/post', createVitals);
-router.patch('/patch/:id', updateVitals);
-router.delete('/delete/:id', deleteVitals);
+// router.patch('/patch/:id', updateVitals);
+// router.delete('/delete/:id', deleteVitals);
 
 
 app.use('/vitals', router);

@@ -6,6 +6,10 @@ export const DashboardContext = createContext(initialState);
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'LOAD_SAVED_DATA': {
+      const { userVital } = action.payload;
+      return { ...state, userVital };
+    }
 
     case 'CONNECT': {
       const { device, oximetry } = action.payload;

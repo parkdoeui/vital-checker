@@ -1,3 +1,4 @@
+
 class storage {
   constructor(serviceUUID, chtUUID) {
     this.vitalLog = [];

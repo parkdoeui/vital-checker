@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
 import { DashboardContext } from '../context/DashboardContext';
+import { getSavedVitals } from '../lib/api/vitals';
 
 const timeInterval = 1000;
 const flags = {
@@ -14,6 +15,10 @@ const DashboardController = () => {
   const { dispatch, state } = useContext(DashboardContext);
   const { oximetry, userStatus, userVital, vitalSnapshot, rollbackCount, device } = state;
   const signal = [];
+
+  useEffect(() => {
+    getSavedVitals().then(([userVital]) => dispatch({ type: 'LOAD_SAVED_DATA', payload: { userVital } }));
+  }, []);
 
   useEffect(() => {
     if (device) {
@@ -37,6 +42,7 @@ const DashboardController = () => {
     };
   }, [oximetry]);
 
+  console.log(userVital);
   useEffect(() => {
     if (userStatus.isConnected && userStatus.startTime) {
       const currentTime = setInterval(() => {
