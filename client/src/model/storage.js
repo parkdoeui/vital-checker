@@ -1,9 +1,10 @@
 class storage {
-  constructor(serviceUUID, chtUUID) {
+  constructor(serviceUUID, chtUUID, userID) {
     this.vitalLog = [];
-    this.history = [];
+    this.vitalHistory = [];
     this.serviceUUID = serviceUUID || null;
     this.chtUUID = chtUUID || null;
+    this.userID = userID || null;
 
   }
 
@@ -12,7 +13,7 @@ class storage {
       ...data,
       vitalLog: [...this.vitalLog],
     };
-    this.history.push(historyData);
+    this.vitalHistory.push(historyData);
     this.vitalLog.length = 0;
   }
 
@@ -24,6 +25,14 @@ class storage {
     this.serviceUUID = serviceUUID;
     this.chtUUID = chtUUID;
   }
+
+  addHistory(data) {
+    console.log("data", data)
+    if (data.length > 0) {
+      this.vitalHistory = data.map(d => d.vitalHistory);
+    }
+  }
 }
 
 export default storage;
+

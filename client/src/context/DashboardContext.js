@@ -1,11 +1,20 @@
 import React, { createContext, useReducer } from 'react';
 import { initialState, defaultOxyData } from '../configs';
 import { getSummary } from '../utils';
+import { postVital } from '../lib/api/vitals';
 
 export const DashboardContext = createContext(initialState);
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'LOAD_DATA': {
+      const { vitalHistory, userInfo } = action.payload;
+      if (vitalHistory.length > 0) {
+        state.userVital.addHistory(vitalHistory);
+        // state.userVital.addUUIDs(userInfo.serviceUUID, userInfo.chtUUID)
+      }
+      return { ...state };
+    }
 
     case 'CONNECT': {
       const { device, oximetry } = action.payload;
@@ -25,8 +34,11 @@ const reducer = (state, action) => {
         const history = {
           runTime: state.oxyData.elapsedTime,
           date: state.userStatus.startTime,
+          vitalLog: [...state.userVital.vitalLog],
         };
+
         getSummary(state.userVital.vitalLog);
+        postVital(history, state.userVital.userID);
         state.userVital.updateHistory(history);
         const userStatus = {
           ...state.userStatus,
@@ -34,7 +46,6 @@ const reducer = (state, action) => {
           deviceName: null,
           startTime: new Date(),
         };
-        console.log(state.userVital);
         const oxyData = { ...defaultOxyData };
         return { ...state, userStatus, oxyData };
       }
@@ -76,7 +87,6 @@ const reducer = (state, action) => {
       const testValue = elapsedTime.rawTime - state.oxyData.rawTime;
       console.log(testValue);
       if (testValue > 1100) {
-        // debugger;
         console.log(state.userVital);
       }
       state.userVital.updateLog(oxyData);

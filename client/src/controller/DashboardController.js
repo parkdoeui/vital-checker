@@ -2,6 +2,8 @@ import React, { useEffect, useContext } from 'react';
 import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
 import { DashboardContext } from '../context/DashboardContext';
+import { getVitals, postVital } from '../lib/api/vitals';
+import { getUserInfo } from '../lib/api/user';
 
 const timeInterval = 1000;
 const flags = {
@@ -9,11 +11,18 @@ const flags = {
   graph: 7,
   vital: 8,
 };
+
 const DashboardController = () => {
 
   const { dispatch, state } = useContext(DashboardContext);
   const { oximetry, userStatus, userVital, vitalSnapshot, rollbackCount, device } = state;
   const signal = [];
+
+  useEffect(async () => {
+    const fetchedVitalHistory = await getVitals(userVital.userID);
+    const fetchedUserInfo = await getUserInfo(userVital.userID);
+    dispatch({ type: 'LOAD_DATA', payload: { vitalHistory: fetchedVitalHistory, userInfo: fetchedUserInfo } });
+  }, []);
 
   useEffect(() => {
     if (device) {
@@ -37,6 +46,7 @@ const DashboardController = () => {
     };
   }, [oximetry]);
 
+  console.log(userVital);
   useEffect(() => {
     if (userStatus.isConnected && userStatus.startTime) {
       const currentTime = setInterval(() => {
@@ -69,7 +79,7 @@ const DashboardController = () => {
 
   const onDisconnect = () => {
     dispatch({ type: 'DISCONNECT' });
-    console.table(state.userVital.history);
+    console.table(state.userVital.vitalHistory);
   };
 
   //This belongs to Model

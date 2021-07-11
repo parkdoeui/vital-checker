@@ -66,7 +66,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
       return n;
     });
   };
-
+  console.log(userVital.vitalHistory);
   return (
     <>
       {openModal &&
@@ -145,13 +145,14 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
         <div>
           <div className='history__container'>
             <div className='history__log'>
-              {userVital.history.map(({ runTime, date }, idx) =>
-                <div key={idx} onClick={() => setCurrentHistory(userVital.history[idx])}>
+              {userVital.vitalHistory.map(({ runTime, date }, idx) =>
+                <div key={idx} onClick={() => setCurrentHistory(userVital.vitalHistory[idx])}>
                   <Typography variant='body'>
                     {`Total run time: ${runTime}`}
                   </Typography>
                   <Typography variant='body'>
-                    {`Date: ${formatDate(date)}`}
+                    {/* {`Date: ${formatDate(date)}`} */}
+                    {`Date: ${date}`}
                   </Typography>
                 </div>,
               )}

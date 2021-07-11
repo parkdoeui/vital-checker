@@ -36,11 +36,14 @@ export const getServiceUUID = () => {
 };
 
 export const formatDate = (date) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
-  return `${months[month]} ${day}, ${year}`;
+  // debugger;
+  // const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // const year = date.getFullYear();
+  // const month = date.getMonth();
+  // const day = date.getDate();
+  // return `${months[month]} ${day}, ${year}`;
+  const formattedDate = date.split('T');
+  return formattedDate[0];
 };
 
 export const getAverage = (data) => (data.reduce((acc, val) => { return acc + val; }, 0) / data.length).toFixed(1);
