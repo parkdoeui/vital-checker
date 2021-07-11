@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const PORT = 5000;
-const url = `http://localhost:${PORT}/vitals`;
+const URL = `http://localhost:${PORT}/vitals`;
 
-export const getSavedVitals = async () => {
-  const res = await axios.get(url);
+export const getVitals = async (userId) => {
+  const res = await axios.get(`${URL}/${userId}`);
   return res.data;
 };
 
+export const postVital = (history, userId) => axios.post(`${URL}/${userId}/post`, history);

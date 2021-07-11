@@ -1,14 +1,19 @@
 import React, { createContext, useReducer } from 'react';
 import { initialState, defaultOxyData } from '../configs';
 import { getSummary } from '../utils';
+import { postVital } from '../lib/api/vitals';
 
 export const DashboardContext = createContext(initialState);
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'LOAD_SAVED_DATA': {
-      const { userVital } = action.payload;
-      return { ...state, userVital };
+    case 'LOAD_DATA': {
+      const { userVital, userInfo } = action.payload;
+      if (userVital.length > 0) {
+        state.userVital.addHistory(userVital);
+        // state.userVital.addUUIDs(userInfo.serviceUUID, userInfo.chtUUID)
+      }
+      return { ...state };
     }
 
     case 'CONNECT': {
@@ -29,8 +34,11 @@ const reducer = (state, action) => {
         const history = {
           runTime: state.oxyData.elapsedTime,
           date: state.userStatus.startTime,
+          vitalLog: [...state.userVital.vitalLog],
         };
+
         getSummary(state.userVital.vitalLog);
+        postVital(history, state.userVital.userID);
         state.userVital.updateHistory(history);
         const userStatus = {
           ...state.userStatus,
@@ -38,7 +46,6 @@ const reducer = (state, action) => {
           deviceName: null,
           startTime: new Date(),
         };
-        console.log(state.userVital);
         const oxyData = { ...defaultOxyData };
         return { ...state, userStatus, oxyData };
       }

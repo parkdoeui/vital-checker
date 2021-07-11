@@ -66,7 +66,7 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
       return n;
     });
   };
-
+  console.log(userVital.serviceUUID, userVital.chtUUID);
   return (
     <>
       {openModal &&
@@ -151,7 +151,8 @@ const Dashboard = ({ onSubscribe, onDisconnect }) => {
                     {`Total run time: ${runTime}`}
                   </Typography>
                   <Typography variant='body'>
-                    {`Date: ${formatDate(date)}`}
+                    {/* {`Date: ${formatDate(date)}`} */}
+                    {`Date: ${date}`}
                   </Typography>
                 </div>,
               )}

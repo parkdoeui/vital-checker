@@ -2,7 +2,8 @@ import React, { useEffect, useContext } from 'react';
 import Dashboard from '../view/Dashboard';
 import { checkVitalAnomalies, getTime } from '../utils';
 import { DashboardContext } from '../context/DashboardContext';
-import { getSavedVitals } from '../lib/api/vitals';
+import { getVitals, postVital } from '../lib/api/vitals';
+import { getUserInfo } from '../lib/api/user';
 
 const timeInterval = 1000;
 const flags = {
@@ -10,14 +11,19 @@ const flags = {
   graph: 7,
   vital: 8,
 };
+
 const DashboardController = () => {
 
   const { dispatch, state } = useContext(DashboardContext);
   const { oximetry, userStatus, userVital, vitalSnapshot, rollbackCount, device } = state;
   const signal = [];
 
-  useEffect(() => {
-    getSavedVitals().then(([userVital]) => dispatch({ type: 'LOAD_SAVED_DATA', payload: { userVital } }));
+  useEffect(async () => {
+    const fetchedUserVital = await getVitals(userVital.userID);
+    const fetchedUserInfo = await getUserInfo(userVital.userID);
+    console.log('userInfo:', fetchedUserInfo);
+    console.log('userVital:', fetchedUserVital);
+    dispatch({ type: 'LOAD_DATA', payload: { userVital: fetchedUserVital, userInfo: fetchedUserInfo } });
   }, []);
 
   useEffect(() => {

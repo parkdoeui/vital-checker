@@ -122,7 +122,8 @@ export const defaultOxyData = {
 
 export const defaultVital = new storage(
   process.env.REACT_APP_SERVICE_UUID,
-  process.env.REACT_APP_CHT_UUID);
+  process.env.REACT_APP_CHT_UUID,
+  'ajsdo222');
 
 export const tabsList = [{
   name: 'Dashboard 📈',
