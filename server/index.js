@@ -1,17 +1,23 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import { getVitals, createVitals } from './controllers/userVitalctrl.js'
-
+import cors from 'cors'
+import { getVitals, postVital } from './controllers/userVital.ctrl.js'
+import { getUserInfo } from './controllers/user.ctrl.js'
 const app = express();
-const router = express.Router();
+const vitalRouter = express.Router();
+const userRouter = express.Router();
 
-router.get('/', getVitals);
-router.post('/post', createVitals);
-// router.patch('/patch/:id', updateVitals);
-// router.delete('/delete/:id', deleteVitals);
+vitalRouter.get('/:userId', getVitals);
+vitalRouter.post('/:userId/post', postVital);
 
+userRouter.get('/:userId', getUserInfo);
 
-app.use('/vitals', router);
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json({ extended: true }))
+app.use(cors());
+
+app.use('/vitals', vitalRouter);
+app.use('/user', userRouter);
 
 const USER_NAME = 'dopark'
 const PASSWORD = 'mGjGs0miZ3xoQboa'
