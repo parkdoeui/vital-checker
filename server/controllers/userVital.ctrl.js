@@ -14,11 +14,11 @@ export const getVitals = async (req, res) => {
 
 export const postVital = async (req, res) => {
 
-  const history = req.body;
+  const vitalHistory = req.body;
   const { userId } = req.params;
 
   try {
-    const newVital = new UserVital({ userID: userId, history });
+    const newVital = new UserVital({ userID: userId, vitalHistory });
     newVital.save();
     res.status(200).json(newVital);
   } catch (err) {
