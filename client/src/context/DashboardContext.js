@@ -8,9 +8,9 @@ export const DashboardContext = createContext(initialState);
 const reducer = (state, action) => {
   switch (action.type) {
     case 'LOAD_DATA': {
-      const { userVital, userInfo } = action.payload;
-      if (userVital.length > 0) {
-        state.userVital.addHistory(userVital);
+      const { vitalHistory, userInfo } = action.payload;
+      if (vitalHistory.length > 0) {
+        state.userVital.addHistory(vitalHistory);
         // state.userVital.addUUIDs(userInfo.serviceUUID, userInfo.chtUUID)
       }
       return { ...state };
@@ -87,7 +87,6 @@ const reducer = (state, action) => {
       const testValue = elapsedTime.rawTime - state.oxyData.rawTime;
       console.log(testValue);
       if (testValue > 1100) {
-        // debugger;
         console.log(state.userVital);
       }
       state.userVital.updateLog(oxyData);

@@ -19,11 +19,9 @@ const DashboardController = () => {
   const signal = [];
 
   useEffect(async () => {
-    const fetchedUserVital = await getVitals(userVital.userID);
+    const fetchedVitalHistory = await getVitals(userVital.userID);
     const fetchedUserInfo = await getUserInfo(userVital.userID);
-    console.log('userInfo:', fetchedUserInfo);
-    console.log('userVital:', fetchedUserVital);
-    dispatch({ type: 'LOAD_DATA', payload: { userVital: fetchedUserVital, userInfo: fetchedUserInfo } });
+    dispatch({ type: 'LOAD_DATA', payload: { vitalHistory: fetchedVitalHistory, userInfo: fetchedUserInfo } });
   }, []);
 
   useEffect(() => {
@@ -81,7 +79,7 @@ const DashboardController = () => {
 
   const onDisconnect = () => {
     dispatch({ type: 'DISCONNECT' });
-    console.table(state.userVital.history);
+    console.table(state.userVital.vitalHistory);
   };
 
   //This belongs to Model
